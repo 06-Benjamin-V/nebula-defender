@@ -28,6 +28,7 @@ export class Audio {
     this.allowed = true;
     if (this.muted || !this.available) { this.onChange(this); return false; }
     if (!this.pendingUnlock) this.pendingUnlock = this.prepare().finally(() => { this.pendingUnlock = null; });
+    this.onChange(this);
     return this.pendingUnlock;
   }
   async prepare() {

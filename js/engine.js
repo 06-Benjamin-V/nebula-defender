@@ -10,6 +10,8 @@ import { Effects } from './effects.js';
 import { Audio } from './audio.js';
 import { Particles } from './particles.js';
 import { Camera } from './camera.js';
+import { TouchControls } from './touch.js';
+import { Layout } from './layout.js';
 /** Un solo loop y listeners únicos; la sesión conserva toda la simulación comprobable sin DOM. */
 export class Game {
   constructor(canvas) {
@@ -24,6 +26,7 @@ export class Game {
     this.motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
     this.state = new StateMachine(value => this.transition(value));
     this.input = new Input(() => this.togglePause(), this.debug ? number => this.start(number) : null);
+    this.touch = new TouchControls(this.input, document.querySelector('#touch-controls'));
     this.ui = new UI(() => this.state.value === STATES.PAUSED ? this.togglePause() : this.begin(), () => this.togglePause(), () => this.begin(), {
       onToggleSound: () => {
         this.audio.setMuted(!this.audio.muted);
@@ -34,6 +37,7 @@ export class Game {
     });
     this.ui.setHero(this.sprites); this.ui.syncAudio(this.audio);
     this.reset(); this.ui.render(STATES.MENU);
+    this.layout = new Layout(document.querySelector('.console'), document.querySelector('.viewport'));
     document.querySelector('#debug-note').hidden = !this.debug;
     const autoPause = () => {
       this.cancelStart();
@@ -67,6 +71,7 @@ export class Game {
     if (document.hidden || this.ui.dialogOpen) return;
     if (resume) {
       this.state.set(STATES.PLAYING); this.canvas.focus({ preventScroll: true });
+      this.layout?.focusOnGame();
     } else this.start();
     this.audio.play(resume ? 'select' : 'start');
   }
@@ -79,6 +84,7 @@ export class Game {
     if (value === STATES.VICTORY || value === STATES.DEFEAT) this.audio.play(value);
     else if (value === STATES.PAUSED && !this.autoPausing && !document.hidden) this.audio.play('pause');
     this.ui.render(value); this.ui.sync(this.session, value, this.recordAtStart);
+    this.touch.syncState(value === STATES.PLAYING);
   }
   pauseForDialog() {
     this.cancelStart();
@@ -93,6 +99,7 @@ export class Game {
     if (this.state.value !== STATES.PLAYING) this.state.set(STATES.PLAYING);
     this.ui.render(STATES.PLAYING);
     this.canvas.focus({ preventScroll: true });
+    this.layout?.focusOnGame();
   }
   togglePause() {
     if (this.ui.dialogOpen || this.starting) return;

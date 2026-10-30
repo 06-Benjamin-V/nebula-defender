@@ -27,8 +27,9 @@ Abrir http://127.0.0.1:8000. Detener el servidor con Ctrl+C. El servidor de Node
 - P o Escape: pausar/continuar. También hay un botón de pausa.
 - La partida se pausa al perder el foco u ocultar la pestaña.
 - Reintentar después de ganar o perder empieza una campaña limpia; también se puede reiniciar desde pausa.
+- En dispositivos táctiles aparecen botones de izquierda, derecha y disparo. Mantén una dirección y Disparar con dos dedos; al soltar o cancelar un toque se libera esa acción. En menú y pausa están deshabilitados.
 
-## Estado: Fase 4
+## Estado: Fase 5 — implementación completa
 
 Campaña jugable de cuatro sectores. Los sectores 1–3 contienen 24 invasores cada uno; el cuarto es un combate exclusivo contra el jefe.
 
@@ -67,11 +68,24 @@ Abrir instrucciones o ajustes durante el combate pausa la misión y detiene las 
 
 El audio usa exclusivamente osciladores y envolventes de Web Audio API: disparos, impactos, explosiones, protección, mejoras, botones y señales de inicio, pausa, sector, victoria y derrota. No hay archivos de audio ni música externa. Se crea un único `AudioContext` al pulsar Jugar/Reintentar, nunca al cargar la página, abrir ajustes o cambiar preferencias antes de jugar. Entrar directamente a un sector con debug no desbloquea el audio por sí solo.
 
+Se corrigió el retraso inicial informado por el estudiante: la simulación y la señal de inicio ahora esperan la confirmación de `AudioContext.resume()`. Mientras tanto aparece «Preparando misión» y se bloquean inicios duplicados. Continuar usa la misma sincronización; perder el foco o abrir un diálogo cancela un inicio pendiente. El contexto solicita latencia interactiva. Si el dispositivo no responde en tres segundos, el juego continúa en silencio con un mensaje en ajustes, sin incorporar sonidos atrasados a mitad del combate. Recargar permite volver a intentar la activación en ese caso.
+
 Silencio y volumen se guardan en `localStorage` dentro de `try/catch`. El volumen inicial es 40 %, con ganancia maestra moderada. «Probar sonido» se habilita cuando el audio está disponible y desbloqueado; no se habilita antes de Jugar ni mientras está silenciado o con volumen cero. Si Web Audio no está disponible, el juego continúa en silencio e informa el estado en ajustes. Pausar, reiniciar, perder el foco u ocultar la pestaña cancela las voces pendientes; al volver no se reproduce una ráfaga de sonidos atrasados.
 
 Las explosiones, impactos y mejoras producen pequeñas partículas cuadradas, con un máximo simultáneo de 160 y descarte al expirar. La cámara vibra de forma breve al recibir daño o destruir centinelas/Némesis: como máximo tres píxeles lógicos. El HUD permanece fijo y las coordenadas de colisión no cambian. Pausa congela los efectos; reinicio y cambio de sector los limpian. `prefers-reduced-motion` elimina partículas y vibración, además de reducir las animaciones existentes. Las voces están limitadas a 12, con protección contra efectos repetidos en el mismo instante y desconexión al terminar.
 
-La configuración visual y las notas de cada efecto de sonido están también en `js/config.js`, separadas del balance de combate. No se modificaron las reglas de la campaña en esta fase; solo se añadió una señal visual/sonora para impactos bloqueados por escudo o invulnerabilidad.
+La configuración visual y las notas de cada efecto de sonido están también en `js/config.js`, separadas del balance de combate. La presentación no modifica las reglas de la campaña; los impactos bloqueados por escudo o invulnerabilidad tienen una señal visual y sonora propia.
+
+## Responsive y accesibilidad
+
+- El campo mantiene siempre 3:2 y la resolución interna de 480×320. Se limita a escala ×2 y aprovecha escala entera cuando cabe sin desaprovechar espacio útil; en pantallas pequeñas se usa escala proporcional fraccional con pixelado y sin suavizado.
+- El diseño compacto reorganiza HUD y botones. En horizontal de poca altura oculta el encabezado decorativo y reserva los lados para los controles táctiles. En vertical reserva espacio para los botones inferiores. Al iniciar en un dispositivo táctil, desplaza el panel al área visible si hace falta.
+- Los controles se muestran mediante `(any-pointer: coarse)`, por lo que también funcionan en equipos híbridos con pantalla táctil. El cambio de tamaño, la pérdida de captura, la cancelación de un puntero, pausa y reinicio limpian pulsaciones retenidas. Los botones también admiten mantener Espacio/Enter cuando reciben foco de teclado.
+- No se bloquea el zoom del navegador. Se respetan las áreas seguras de pantalla; el zoom no se contrarresta encogiendo el campo por el cambio del viewport visual.
+- Hay enlace para saltar al campo de juego, foco visible, etiquetas de controles, volumen y barra del jefe, diálogos nativos con retorno del foco y avisos discretos de estado, pérdida de vida y recogida de mejoras.
+- El contraste comprobado de las seis combinaciones principales supera 4,5:1: texto/fondo 17,06; texto/panel 15,77; secundario/panel 7,10; cian/panel 13,43; violeta/panel 6,08; botón principal 13,45. Esto no equivale a una auditoría completa con lectores de pantalla.
+
+Para probar en un teléfono físico, ejecuta el servidor Python en el equipo y abre `http://IP_LOCAL_DEL_EQUIPO:8000` desde un teléfono en la misma red, sustituyendo el marcador por la dirección local del equipo. El servidor opcional de Node está limitado a `127.0.0.1` y sirve para pruebas en ese mismo equipo. La prueba de dos dedos y los detalles específicos de cada teléfono requieren dispositivo físico; la emulación de tamaño del navegador no los reproduce por sí sola.
 
 ## Arte y galería
 
@@ -115,6 +129,8 @@ js/
   dialogs.js            Instrucciones/ajustes y devolución del foco
   sprites-preview.js    Galería independiente
   input.js              Teclado y atajos de debug
+  touch.js              Punteros simultáneos, captura y liberación de controles
+  layout.js             Ajuste proporcional del campo y visibilidad en móvil
   ui.js                 HUD, barra del jefe y pantallas
 tests/                  Pruebas de lógica y arte con Node
 tools/                  Servidor opcional y simulación diagnóstica
@@ -132,9 +148,12 @@ Con Node.js 24:
 ```powershell
 node --test tests/*.test.mjs
 node tools/simulate-campaign.mjs
+node tools/check-project.mjs
 ```
 
-Las 32 pruebas cubren arte y caché, colisiones, resistencia, introducción/transiciones, vidas, invulnerabilidad, mejoras, límites de disparos, jefe, reinicio y almacenamiento. Las nuevas pruebas verifican creación diferida del audio, preferencias, límites/limpieza de voces, fallos de compatibilidad, partículas, vibración y teclas/foco de los diálogos. El audio se comprueba con un doble de Web Audio: esas pruebas no equivalen a una evaluación auditiva. Las pruebas de transición colocan proyectiles controlados para verificar cada baja; no son partidas humanas.
+Las 42 pruebas cubren arte y caché, colisiones, resistencia, introducción/transiciones, vidas, invulnerabilidad, mejoras, límites de disparos, jefe, reinicio y almacenamiento. Incluyen audio diferido/sincronizado, preferencias, limpieza de voces, fallos de compatibilidad, partículas, vibración, diálogos, punteros simultáneos, cancelación/rotación y proporción del campo. El audio y los eventos táctiles se comprueban con dobles: esas pruebas no equivalen a una escucha ni a una prueba física con dos dedos. Las pruebas de transición colocan proyectiles controlados para verificar cada baja; no son partidas humanas.
+
+`check-project.mjs` comprueba 65 referencias locales/importaciones, identificadores HTML únicos, ausencia de referencias remotas en las páginas y las seis combinaciones de contraste indicadas arriba. No instala dependencias ni modifica archivos.
 
 El diagnóstico adicional ejecuta un controlador automático sobre la misma simulación a pasos de 1/60 s, con tres semillas reproducibles y sin modificar daño o salud. En la comprobación de Codex las tres campañas llegaron a victoria en 64, 74 y 71 segundos **simulados**, con dos, una y tres vidas respectivamente, y 13.800 puntos. Esto no mide FPS ni demuestra una dificultad adecuada para cualquier jugador.
 
@@ -153,8 +172,11 @@ En Fase 4 Codex comprobó menú, instrucciones, ajustes, persistencia de silenci
 7. Revisar movimiento reducido con la preferencia real del sistema y comprobar fluidez en el navegador habitual.
 8. Escuchar los efectos con volumen moderado, silenciar/reactivar y cambiar de pestaña durante el combate. Comprobar que no quedan sonidos pendientes al pausar o reiniciar y que el balance entre efectos resulta cómodo.
 
-## Próximas fases (requieren confirmación)
+## Documentación de la evaluación
 
-5. Controles táctiles, revisión responsive/accesibilidad y documentación académica con espacios para evidencia del estudiante.
+- [docs/proceso_ia.md](docs/proceso_ia.md): plantilla con herramientas, prompts reales, evidencias, bugs, intervenciones propias y comparación de versiones. Todos los apartados personales están marcados **[COMPLETAR POR EL ESTUDIANTE]**.
+- [documento_acompanamiento.md](documento_acompanamiento.md): estructura breve con preguntas guía para una página, sin reflexión redactada por la IA.
+- [docs/implementation-log.md](docs/implementation-log.md): acciones y pruebas realmente realizadas por Codex.
+- [docs/testing.md](docs/testing.md): comprobaciones finales y límites de la verificación, con pasos manuales para el equipo del estudiante.
 
 La planificación previa con ChatGPT y la reflexión académica serán completadas por el estudiante. Solo se registran acciones y verificaciones reales de Codex en `docs/implementation-log.md`; no se inventan intervenciones humanas ni capturas.

@@ -36,6 +36,8 @@ for (const [name, label, title, description] of catalog) {
   }
   const details = document.createElement('details'), summary = document.createElement('summary'), strip = document.createElement('div');
   summary.textContent = 'Inspeccionar todos los frames ×8'; strip.className = 'frame-strip';
+  summary.setAttribute('role', 'button'); summary.setAttribute('aria-expanded', 'false');
+  details.addEventListener('toggle', () => summary.setAttribute('aria-expanded', String(details.open)));
   for (const frame of frames) {
     const figure = document.createElement('figure'), frameCanvas = document.createElement('canvas'), caption = document.createElement('figcaption');
     frameCanvas.width = canvas.width; frameCanvas.height = canvas.height;

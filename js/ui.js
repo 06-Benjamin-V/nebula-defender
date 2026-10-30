@@ -21,7 +21,7 @@ export class UI {
     this.preview.addEventListener('click', onPreview);
     document.addEventListener('click', event => {
       const button = event.target.closest('button');
-      if (button && !button.disabled) onSelect();
+      if (button && !button.disabled && !button.hasAttribute('data-touch')) onSelect();
     });
     this.dialogs = new Dialogs(beforeDialog, afterDialog);
     document.querySelector('#help-power-duration').textContent = CONFIG.powerUps.duration;
@@ -29,6 +29,7 @@ export class UI {
   get dialogOpen() { return this.dialogs.isOpen; }
   setStarting(value) {
     this.starting = value;
+    this.overlay.setAttribute('aria-busy', String(value));
     this.primary.disabled = value; this.restart.disabled = value;
     if (value) this.primary.textContent = 'PREPARANDO MISIÓN…';
     else this.render(this.currentState);
@@ -52,12 +53,25 @@ export class UI {
       : !audio.allowed ? 'El audio se activa al pulsar Jugar. Tu preferencia se guarda en este navegador.'
       : audio.muted ? 'Sonido silenciado. Tu preferencia está guardada en este navegador.'
       : audio.volume === 0 ? 'Volumen a cero. Súbelo para escuchar los efectos.'
+      : audio.context?.state !== 'running' ? 'Preparando la salida de sonido…'
       : 'Efectos de sonido listos. El volumen y el silencio se guardan automáticamente.';
     if (this.audioStatus.textContent !== status) this.audioStatus.textContent = status;
   }
   text(id, value) { if (this.nodes[id].textContent !== value) this.nodes[id].textContent = value; }
   sync(session, state, recordAtStart = 0) {
     const { player, levels } = session;
+    if (state === STATES.PLAYING && this.lastLives !== undefined && player.lives < this.lastLives) {
+      document.querySelector('#announcement').textContent = 'Impacto. Vidas restantes: ' + player.lives;
+    }
+    this.lastLives = player.lives;
+    this.previousPowers ??= {};
+    for (const type of CONFIG.powerUps.types) {
+      if (state === STATES.PLAYING && player.powers[type] > 0 && this.previousPowers[type] === false) {
+        const name = { double: 'Disparo doble', rapid: 'Disparo rápido', shield: 'Escudo' }[type];
+        document.querySelector('#announcement').textContent = name + ' activado';
+      }
+      this.previousPowers[type] = player.powers[type] > 0;
+    }
     this.text('score', String(session.score).padStart(6, '0'));
     this.text('record', String(session.records.score).padStart(6, '0'));
     this.text('lives', player.lives + ' / ' + CONFIG.player.lives);

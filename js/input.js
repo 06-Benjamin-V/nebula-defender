@@ -2,6 +2,7 @@
 export class Input {
   constructor(onPause, onDebugLevel = null) {
     this.keys = new Set();
+    this.touch = new Set();
     const tracked = ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space', 'KeyP', 'Escape'];
     window.addEventListener('keydown', event => {
       const pauseKey = ['KeyP', 'Escape'].includes(event.code);
@@ -15,7 +16,7 @@ export class Input {
     window.addEventListener('keyup', event => this.keys.delete(event.code));
     window.addEventListener('blur', () => this.clear());
   }
-  get axis() { return Number(this.keys.has('ArrowRight') || this.keys.has('KeyD')) - Number(this.keys.has('ArrowLeft') || this.keys.has('KeyA')); }
-  get firing() { return this.keys.has('Space'); }
-  clear() { this.keys.clear(); }
+  get axis() { return Number(this.keys.has('ArrowRight') || this.keys.has('KeyD') || this.touch.has('right')) - Number(this.keys.has('ArrowLeft') || this.keys.has('KeyA') || this.touch.has('left')); }
+  get firing() { return this.keys.has('Space') || this.touch.has('fire'); }
+  clear() { this.keys.clear(); this.touch.clear(); this.onClear?.(); }
 }
