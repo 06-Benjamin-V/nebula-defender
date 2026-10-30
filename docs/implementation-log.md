@@ -48,3 +48,23 @@ Verificaciones reales:
 - Comprobación HTTP final: respuestas 200 para el juego y los siete módulos comprobados (`session`, `levels`, `boss`, `power-ups`, `storage`, `engine` y `ui`). `git diff --check` no detectó errores de espacios.
 
 Pendientes de verificación manual: campaña completa a velocidad normal en el navegador habitual, sensaciones de dificultad, recogida visual de todas las mejoras y preferencia real de movimiento reducido. Se documentaron pasos en README. Audio, partículas, screen shake y documentación académica final corresponden a fases 4–5; no se avanzó a ellas.
+
+## Fase 4 — Interfaz, audio y efectos
+
+El estudiante confirmó que la Fase 3 está en orden y autorizó comenzar esta fase. Codex pulió menú, controles superiores y pantallas de pausa/resultado; añadió emblema original, resumen final y aviso de récord, instrucciones y ajustes mediante diálogos nativos. Se añadió síntesis Web Audio para disparos, impactos, explosiones, mejoras, protección, botones y señales de misión; silencio y volumen persistentes. El contexto se crea desde Jugar/Reintentar y las voces se limitan, detienen y desconectan al terminar. No se usaron archivos de audio ni recursos remotos.
+
+Se crearon módulos independientes para audio, partículas, cámara y diálogos. La vibración solo modifica el dibujo, el HUD permanece fijo y las colisiones conservan sus coordenadas. Las partículas están limitadas y se descartan al expirar; ambas funciones se anulan con movimiento reducido. Se respetó la pausa y se limpiaron los efectos al reiniciar o cambiar de sector. Las reglas de la campaña permanecen iguales; se añadió notificación de impactos bloqueados para darles respuesta audiovisual.
+
+Verificaciones reales:
+
+- `node --check` sobre todos los módulos JavaScript y `git diff --check`: sin errores.
+- `node --test tests/*.test.mjs`: 32 pruebas aprobadas. Las nueve nuevas verifican audio diferido, persistencia/silencio, cadencia y límite de voces, limpieza, compatibilidad/almacenamiento bloqueados, volumen cero/corrupto, partículas y cámara con movimiento reducido, exclusión de teclas de juego dentro de diálogos y retorno del foco después de cerrar. Web Audio se comprueba con dobles; no se atribuye una escucha a estas pruebas.
+- `node tools/simulate-campaign.mjs`: las tres semillas conservan victoria, 13.800 puntos y resultados de 64/74/71 segundos simulados con 2/1/3 vidas; la presentación no cambió la simulación de combate.
+- El puerto 8000 ya estaba ocupado por un servidor que entregaba estos archivos actualizados; se reutilizó para las pruebas sin detener ese servicio existente.
+- Navegador: ajustes antes de Jugar mostraron muestra deshabilitada. Se silenció y cambió volumen a 25 %; tras recargar persistieron ambos valores. Se reactivó el sonido, se inició una misión, se obtuvieron 500 puntos y, al abrir ajustes, apareció «Efectos de sonido listos» con «Probar sonido» habilitado. Se activó la muestra y se consultó la consola sin avisos ni errores del juego. No se afirma una evaluación auditiva de calidad.
+- Se comprobó que abrir ajustes o instrucciones pausa la misión, P dentro del diálogo no la reanuda y Escape cierra sin continuar. Durante la revisión se corrigió el retorno del foco al botón original; al continuar o silenciar desde la barra, el foco se devuelve al canvas para mantener los controles de vuelo. Se verificaron movimiento/disparos después de silenciar y, tras continuar, se observaron 900 puntos con doble y rápido simultáneos en el HUD.
+- Al terminar la comprobación de preferencias se restablecieron sonido activo y volumen 40 %. Se guardó una captura real de los ajustes en `docs/captures/phase-4-settings.png`.
+- La partida real terminó en derrota y se verificaron el resumen de 900 puntos, sector 01/04, 0/3 vidas y el aviso de nuevo récord. También se comprobó reinicio desde pausa: regresó a jugando con tres vidas y cero puntos. Capturas reales adicionales: `docs/captures/phase-4-result.png` y `docs/captures/phase-4-menu.png`. Se consultó de nuevo la consola final sin errores ni avisos del juego.
+- Recursos comprobados por HTTP con respuesta 200: página principal, `css/dialogs.css` y los módulos nuevos de audio, cámara, partículas y diálogos. Se retiró una línea vacía final detectada por `git diff --check`; la comprobación final quedó sin errores de espacios.
+
+Pendientes: escucha y valoración del volumen en el equipo del estudiante, prueba con movimiento reducido real y revisión responsive/accesibilidad de Fase 5. No se completó manualmente la campaña entera en esta fase ni se midieron FPS sostenidos. Los controles táctiles y la documentación académica final siguen reservados para la Fase 5, que requiere confirmación.

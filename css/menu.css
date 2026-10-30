@@ -1,1 +1,25 @@
-.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(transparent,#080b1cf2 35%,#080b1cf2 70%,transparent);padding:20px}.overlay h2{font-size:clamp(18px,3vw,28px);letter-spacing:1px;margin:10px 0}.overlay>p:not(.eyebrow){color:var(--muted);font-size:12px;line-height:1.7}.primary{background:var(--cyan);color:#071820;padding:17px 26px;margin:16px 0 8px;font-weight:bold;letter-spacing:1px;box-shadow:0 0 25px #64f4e519}.primary span{margin-left:24px}.secondary{padding:10px 20px}.overlay .panel-note{font-size:9px!important;letter-spacing:1px}
+.overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: safe center; text-align: center;
+  background: linear-gradient(180deg, #080d1d88, #080d1df0 25%, #080d1df5 75%, #080d1d88);
+  padding: 24px; overflow: auto; overscroll-behavior: contain;
+}
+.overlay > * { flex-shrink: 0; }
+.overlay h2 { font-size: clamp(18px, 3vw, 30px); letter-spacing: 1px; margin: 8px 0; max-width: 560px; }
+.overlay > p:not(.eyebrow) { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 420px; margin: 8px 0; }
+.overlay .eyebrow { margin: 14px 0 6px; }
+.primary { background: var(--cyan); color: #071820; padding: 16px 26px; margin: 16px 0 8px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 0 26px #64f4e51c; }
+.secondary { padding: 10px 20px; }
+.overlay .panel-note { font-size: 9px !important; letter-spacing: 1px; }
+.menu-emblem { display: grid; justify-items: center; gap: 3px; }
+.menu-emblem canvas { width: 72px; height: 72px; filter: drop-shadow(0 0 12px #64f4e52a); }
+.menu-emblem span { font-size: 8px; letter-spacing: 2px; color: var(--muted); }
+.menu-options { display: flex; gap: 12px; margin: 6px 0; }
+.menu-options button { padding: 9px 12px; font-size: 10px; background: #10152a99; color: #bdcce4; }
+.result-summary { display: flex; justify-content: center; gap: 28px; border-block: 1px solid var(--line); padding: 16px 24px; margin: 14px 0 4px; }
+.result-summary dt { font-size: 8px; letter-spacing: 1px; color: var(--muted); }
+.result-summary dd { margin: 8px 0 0; font-size: 18px; color: var(--cyan); font-weight: bold; }
+.overlay .record-badge { color: #ffb45f !important; font-size: 10px !important; letter-spacing: 2px; }
+.overlay[data-state="victory"] h2 { color: var(--cyan); text-shadow: 0 0 25px #64f4e52b; }
+.overlay[data-state="defeat"] h2 { color: #ff9bd0; }
+.overlay[data-state="paused"] h2 { color: #d4c6ff; }

@@ -1,1 +1,9 @@
-button{transition:background .15s,box-shadow .15s,transform .15s}button:hover:not(:disabled){background:#253551;box-shadow:0 0 16px #64f4e522}.primary:hover:not(:disabled){background:#a3fff4;transform:translateY(-2px)}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+button { transition: background .15s, box-shadow .15s, transform .15s, border-color .15s; }
+button:hover:not(:disabled) { background: #253551; border-color: #657c9a; box-shadow: 0 0 16px #64f4e522; }
+.primary:hover:not(:disabled) { background: #a3fff4; border-color: #a3fff4; transform: translateY(-2px); }
+button:active:not(:disabled) { transform: translateY(1px); }
+@keyframes beacon { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.console-tag i { animation: beacon 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}

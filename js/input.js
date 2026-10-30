@@ -6,7 +6,7 @@ export class Input {
     window.addEventListener('keydown', event => {
       const pauseKey = ['KeyP', 'Escape'].includes(event.code);
       const debugKey = onDebugLevel && /^(Digit|Numpad)[1-4]$/.test(event.code);
-      if ((!tracked.includes(event.code) && !debugKey) || event.target.closest('input, textarea, select') || (!pauseKey && !debugKey && event.target.closest('button, a'))) return;
+      if ((!tracked.includes(event.code) && !debugKey) || event.target.closest('input, textarea, select, dialog') || (!pauseKey && !debugKey && event.target.closest('button, a'))) return;
       event.preventDefault();
       if (debugKey) { if (!event.repeat) onDebugLevel(Number(event.code.at(-1))); return; }
       this.keys.add(event.code);

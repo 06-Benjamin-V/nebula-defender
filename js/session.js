@@ -32,12 +32,13 @@ export class Session {
       if (enemy.type !== 'boss') this.powerUps.drop(enemy);
     }, enemy => this.onEvent('impact', enemy));
     const hitLocation = { x: player.x, y: player.y, width: player.width, height: player.height };
-    if ((breach || playerHit) && player.damage(breach)) {
+    const damaged = (breach || playerHit) && player.damage(breach);
+    if (damaged) {
       this.onEvent('damage', hitLocation);
       this.projectiles = this.projectiles.filter(shot => shot.owner === 'player');
       if (player.lives === 0) { this.result = 'defeat'; return; }
       if (breach) { this.loadLevel(levels.number); return; }
-    }
+    } else if (playerHit) this.onEvent('blocked', hitLocation);
     this.powerUps.update(dt, player, item => this.onEvent('power', item));
     this.projectiles = this.projectiles.filter(shot => shot.alive);
     if (levels.formation) levels.formation.enemies = levels.formation.enemies.filter(enemy => enemy.alive);

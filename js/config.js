@@ -27,7 +27,27 @@ export const CONFIG = {
     fireInterval: 1.2, enragedFireInterval: 0.8, shotSpeed: 145, enragedShotSpeed: 165,
     fanSlopes: [-0.55, 0, 0.55], enragedFanSlopes: [-0.8, -0.4, 0, 0.4, 0.8],
     turretInset: 10, telegraphDuration: 0.3, maxShots: 18 },
-  storage: { recordKey: 'nebula-defender-record' },
+  storage: { recordKey: 'nebula-defender-record', mutedKey: 'nebula-defender-muted', volumeKey: 'nebula-defender-volume' },
+  // Presentación: límites de partículas y vibraciones en píxeles lógicos; no afectan las colisiones.
+  feedback: { maxParticles: 160, gravity: 24, speedMin: 25, speedMax: 85, lifeMin: 0.2, lifeMax: 0.55,
+    bursts: { impact: 3, kill: 12, heavy: 20, damage: 22, power: 14, blocked: 5, boss: 42 },
+    shake: { damage: { strength: 2, duration: 0.24 }, heavy: { strength: 1, duration: 0.12 }, boss: { strength: 3, duration: 0.4 } } },
+  // Audio sintetizado. Volumen maestro moderado, límite de voces y cadencia mínima por efecto.
+  audio: { defaultVolume: 0.4, masterGain: 0.22, maxVoices: 12, minInterval: 0.045, attack: 0.006,
+    cues: {
+      fire: [{ frequency: 880, end: 180, duration: 0.075, wave: 'square', gain: 0.08 }],
+      impact: [{ frequency: 170, end: 65, duration: 0.055, wave: 'triangle', gain: 0.15 }],
+      kill: [{ frequency: 125, end: 28, duration: 0.2, wave: 'sawtooth', gain: 0.16 }],
+      damage: [{ frequency: 100, end: 30, duration: 0.3, wave: 'square', gain: 0.12 }],
+      blocked: [{ frequency: 390, end: 160, duration: 0.08, wave: 'sine', gain: 0.15 }],
+      power: [{ frequency: 440, duration: 0.12, wave: 'triangle', gain: 0.2 }, { frequency: 660, delay: 0.07, duration: 0.12, wave: 'triangle', gain: 0.2 }, { frequency: 880, delay: 0.14, duration: 0.16, wave: 'triangle', gain: 0.2 }],
+      select: [{ frequency: 540, end: 780, duration: 0.045, wave: 'sine', gain: 0.18 }],
+      start: [{ frequency: 220, duration: 0.1, wave: 'triangle', gain: 0.2 }, { frequency: 440, delay: 0.1, duration: 0.1, wave: 'triangle', gain: 0.2 }, { frequency: 660, delay: 0.2, duration: 0.2, wave: 'triangle', gain: 0.2 }],
+      pause: [{ frequency: 330, end: 220, duration: 0.1, wave: 'sine', gain: 0.15 }],
+      level: [{ frequency: 330, duration: 0.12, wave: 'triangle', gain: 0.15 }, { frequency: 660, delay: 0.12, duration: 0.2, wave: 'triangle', gain: 0.15 }],
+      victory: [{ frequency: 392, duration: 0.16, wave: 'triangle', gain: 0.2 }, { frequency: 523, delay: 0.16, duration: 0.16, wave: 'triangle', gain: 0.2 }, { frequency: 659, delay: 0.32, duration: 0.16, wave: 'triangle', gain: 0.2 }, { frequency: 784, delay: 0.48, duration: 0.4, wave: 'triangle', gain: 0.2 }],
+      defeat: [{ frequency: 220, duration: 0.2, wave: 'triangle', gain: 0.2 }, { frequency: 165, delay: 0.2, duration: 0.2, wave: 'triangle', gain: 0.2 }, { frequency: 110, delay: 0.4, duration: 0.35, wave: 'triangle', gain: 0.2 }],
+    } },
   palette: { '.': 'transparent', c: '#64f4e5', b: '#4d80ff', p: '#a68aff', m: '#ff68c6', w: '#ecf8ff', o: '#ffb45f', d: '#253757' },
   background: '#080d1d',
   // Ritmos puramente visuales, independientes del movimiento y de los disparos.

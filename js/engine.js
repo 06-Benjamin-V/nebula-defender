@@ -7,42 +7,96 @@ import { Sprites } from './sprites.js';
 import { UI } from './ui.js';
 import { Background } from './background.js';
 import { Effects } from './effects.js';
+import { Audio } from './audio.js';
+import { Particles } from './particles.js';
+import { Camera } from './camera.js';
 /** Un solo loop y listeners únicos; la sesión conserva toda la simulación comprobable sin DOM. */
 export class Game {
   constructor(canvas) {
+    this.canvas = canvas;
     this.ctx = canvas.getContext('2d'); this.ctx.imageSmoothingEnabled = false;
     this.debug = new URLSearchParams(location.search).get('debug') === '1';
     this.sprites = new Sprites(); this.background = new Background(); this.effects = new Effects();
+    this.particles = new Particles(); this.camera = new Camera();
+    this.audio = new Audio({ onChange: () => this.ui?.syncAudio(this.audio) });
     this.records = new Records();
     this.motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
-    this.state = new StateMachine(value => { this.input.clear(); this.ui.render(value); this.ui.sync(this.session, value); });
+    this.state = new StateMachine(value => this.transition(value));
     this.input = new Input(() => this.togglePause(), this.debug ? number => this.start(number) : null);
-    this.ui = new UI(() => this.state.value === STATES.PAUSED ? this.state.set(STATES.PLAYING) : this.start(), () => this.togglePause(), () => this.start());
+    this.ui = new UI(() => this.state.value === STATES.PAUSED ? this.togglePause() : this.begin(), () => this.togglePause(), () => this.begin(), {
+      onToggleSound: () => {
+        this.audio.setMuted(!this.audio.muted);
+        if (this.state.value === STATES.PLAYING) this.canvas.focus({ preventScroll: true });
+      }, onVolume: volume => this.audio.setVolume(volume),
+      onPreview: () => this.audio.play('power'), onSelect: () => this.audio.play('select'),
+      beforeDialog: () => this.pauseForDialog(), afterDialog: () => this.input.clear(),
+    });
+    this.ui.setHero(this.sprites); this.ui.syncAudio(this.audio);
     this.reset(); this.ui.render(STATES.MENU);
     document.querySelector('#debug-note').hidden = !this.debug;
-    const autoPause = () => { if (this.state.value === STATES.PLAYING) this.state.set(STATES.PAUSED); };
+    const autoPause = () => {
+      this.audio.stopAll();
+      if (this.state.value === STATES.PLAYING) {
+        this.autoPausing = true; this.state.set(STATES.PAUSED); this.autoPausing = false;
+      }
+    };
     window.addEventListener('blur', autoPause);
     document.addEventListener('visibilitychange', () => { if (document.hidden) autoPause(); });
+    this.motionPreference.addEventListener('change', event => { if (event.matches) { this.particles.clear(); this.camera.reset(); } });
     this.lastTime = null;
     requestAnimationFrame(time => this.frame(time));
   }
   reset(number = 1) {
-    this.effects.items = []; this.artTime = 0; this.input.clear();
+    this.effects.items = []; this.particles.clear(); this.camera.reset(); this.artTime = 0; this.input.clear();
+    this.audio.stopAll(); this.recordAtStart = this.records.score;
     this.session = new Session({ debug: this.debug, records: this.records, onEvent: (type, entity) => this.effect(type, entity) });
     if (number !== 1) this.session.loadLevel(number);
-    this.ui.sync(this.session, this.state.value);
+    this.ui.sync(this.session, this.state.value, this.recordAtStart);
+  }
+  begin() {
+    // Este método se invoca desde Jugar/Reintentar; debug no desbloquea audio por sí solo.
+    void this.audio.unlock().then(() => {
+      if (this.state.value === STATES.PLAYING && !document.hidden && !this.ui.dialogOpen) this.audio.play('start');
+    });
+    this.start();
+  }
+  transition(value) {
+    this.input.clear(); this.audio.stopAll();
+    if (value === STATES.VICTORY || value === STATES.DEFEAT) this.audio.play(value);
+    else if (value === STATES.PAUSED && !this.autoPausing && !document.hidden) this.audio.play('pause');
+    this.ui.render(value); this.ui.sync(this.session, value, this.recordAtStart);
+  }
+  pauseForDialog() {
+    this.input.clear(); this.audio.stopAll();
+    if (this.state.value === STATES.PLAYING) {
+      this.autoPausing = true; this.state.set(STATES.PAUSED); this.autoPausing = false;
+    }
   }
   start(number = 1) {
     this.reset(number);
     if (this.state.value !== STATES.PLAYING) this.state.set(STATES.PLAYING);
     this.ui.render(STATES.PLAYING);
+    this.canvas.focus({ preventScroll: true });
   }
   togglePause() {
+    if (this.ui.dialogOpen) return;
     if (this.state.value === STATES.PLAYING) this.state.set(STATES.PAUSED);
-    else if (this.state.value === STATES.PAUSED) this.state.set(STATES.PLAYING);
+    else if (this.state.value === STATES.PAUSED) {
+      if (this.audio.allowed) void this.audio.unlock();
+      this.state.set(STATES.PLAYING);
+      this.canvas.focus({ preventScroll: true });
+    }
   }
   effect(type, entity) {
-    if (type === 'level') { this.effects.items = []; return; }
+    if (type === 'level') { this.effects.items = []; this.particles.clear(); this.camera.reset(); this.audio.play('level'); return; }
+    const reduced = this.motionPreference.matches;
+    const centerX = entity.x + entity.width / 2, centerY = entity.y + entity.height / 2;
+    this.audio.play(type);
+    if (['impact', 'kill', 'damage', 'power', 'blocked'].includes(type)) {
+      const kind = type === 'kill' ? entity.type === 'boss' ? 'boss' : entity.type === 'sentinel' ? 'heavy' : 'kill' : type;
+      this.particles.burst(centerX, centerY, kind, reduced);
+      this.camera.kick(kind, reduced);
+    }
     if (type === 'fire') this.effects.add('muzzle', entity.x + entity.width / 2 - 3, entity.y - 6);
     if (type === 'impact' || type === 'power') this.effects.add('impact', entity.x + entity.width / 2 - 3, entity.y + entity.height / 2 - 3);
     if (type === 'kill' || type === 'damage') {
@@ -57,6 +111,8 @@ export class Game {
   draw(dt) {
     const ctx = this.ctx, { player, levels, powerUps, projectiles } = this.session;
     const reduced = this.motionPreference.matches;
+    ctx.fillStyle = CONFIG.background; ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+    ctx.save(); ctx.translate(this.camera.x, this.camera.y);
     this.background.draw(ctx);
     ctx.strokeStyle = '#1b3045'; ctx.setLineDash([3, 5]); ctx.beginPath();
     ctx.moveTo(0, player.y + player.height + 5); ctx.lineTo(CONFIG.width, player.y + player.height + 5); ctx.stroke(); ctx.setLineDash([]);
@@ -82,13 +138,17 @@ export class Game {
     for (const item of powerUps.items) this.sprites.draw(ctx, item.type, item.x, item.y, CONFIG.powerUps.scale);
     for (const shot of projectiles) this.sprites.draw(ctx, shot.owner === 'player' ? 'bullet' : 'enemyBullet', shot.x, shot.y);
     this.effects.draw(ctx, this.sprites, reduced);
+    this.particles.draw(ctx);
     if (this.debug) {
       ctx.strokeStyle = '#ffb45f';
       for (const entity of [player.hitbox, ...levels.targets, ...projectiles, ...powerUps.items]) ctx.strokeRect(entity.x, entity.y, entity.width, entity.height);
+    }
+    ctx.restore();
+    if (this.debug) {
       ctx.fillStyle = '#ecf8ff'; ctx.font = '9px monospace';
       ctx.fillText('FPS ' + (dt > 0 ? Math.round(1 / dt) : 0) + ' · DEBUG 1–4 · SIN RÉCORD', 8, CONFIG.height - 5);
     }
-    this.ui.sync(this.session, this.state.value);
+    this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }
   frame(time) {
     const rawDelta = this.lastTime === null ? 0 : (time - this.lastTime) / 1000;
@@ -96,6 +156,7 @@ export class Game {
     const dt = Math.min(rawDelta, CONFIG.maxDelta);
     if (this.state.value !== STATES.PAUSED && !document.hidden) {
       this.artTime += dt; this.background.update(dt, this.motionPreference.matches); this.effects.update(dt, this.motionPreference.matches);
+      this.particles.update(dt, this.motionPreference.matches); this.camera.update(dt, this.motionPreference.matches);
     }
     if (this.state.value === STATES.PLAYING) this.update(dt);
     this.draw(rawDelta);

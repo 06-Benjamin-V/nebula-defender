@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/menu.css">
   <link rel="stylesheet" href="css/hud.css">
+  <link rel="stylesheet" href="css/dialogs.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
@@ -17,18 +18,40 @@
     <header class="masthead"><a href="./" class="brand">N<span>✦</span>D</a><span>ORBITAL DEFENSE SYSTEM / 01</span><span class="status">● SISTEMA EN LÍNEA</span></header>
     <section class="heading"><p class="eyebrow">ÚLTIMA LÍNEA DE DEFENSA</p><h1>NEBULA <span>DEFENDER</span></h1><p>Una nave. Una misión. Ningún paso atrás.</p></section>
     <section class="console" aria-label="Juego arcade espacial">
-      <div class="hud"><div><span>PUNTUACIÓN</span><strong id="score">000000</strong></div><div><span>RÉCORD</span><strong id="record">000000</strong></div><div><span>VIDAS</span><strong id="lives">3 / 3</strong></div><div class="sector"><span>SECTOR</span><strong id="level">01 / ÓRBITA EXTERIOR</strong></div><button id="pause" type="button" disabled>Pausar <kbd>P</kbd></button></div>
+      <nav class="console-toolbar" aria-label="Opciones de misión">
+        <span class="console-tag"><i aria-hidden="true"></i> CAMPAÑA / 04 SECTORES</span>
+        <div>
+          <button type="button" data-dialog="help-dialog" aria-label="Abrir instrucciones">? <span>Cómo jugar</span></button>
+          <button type="button" data-sound-toggle aria-pressed="true">Sonido activado</button>
+          <button type="button" data-dialog="settings-dialog">Ajustes</button>
+        </div>
+      </nav>
+      <div class="hud">
+        <div><span>PUNTUACIÓN</span><strong id="score">000000</strong></div>
+        <div><span>RÉCORD</span><strong id="record">000000</strong></div>
+        <div><span>VIDAS</span><strong id="lives">3 / 3</strong></div>
+        <div class="sector"><span>SECTOR</span><strong id="level">01 / ÓRBITA EXTERIOR</strong></div>
+        <button id="pause" type="button" disabled>Pausar [P]</button>
+      </div>
       <div class="power-bar" aria-label="Mejoras activas"><span id="power-empty">SIN MEJORAS ACTIVAS</span><span id="power-double" hidden></span><span id="power-rapid" hidden></span><span id="power-shield" hidden></span></div>
       <div class="viewport">
-        <canvas id="game" width="480" height="320" aria-label="Campo de batalla. Usa A y D o las flechas para moverte y espacio para disparar."></canvas>
+        <canvas id="game" width="480" height="320" tabindex="0" aria-label="Campo de batalla. Usa A y D o las flechas para moverte y espacio para disparar."></canvas>
         <div id="boss-panel" class="boss-panel" hidden><div><span>NÉMESIS / REACTOR</span><span id="boss-mode">BLINDAJE ACTIVO</span></div><progress id="boss-health" value="80" max="80" aria-label="Vida de Némesis"></progress></div>
         <div id="level-banner" class="level-banner" hidden><span id="level-label">SECTOR 01</span><strong id="level-name">ÓRBITA EXTERIOR</strong><span>PREPARA LA DEFENSA</span></div>
-        <section id="overlay" class="overlay" aria-labelledby="panel-title">
+        <section id="overlay" class="overlay" aria-labelledby="panel-title" data-state="menu">
+          <div id="menu-emblem" class="menu-emblem" aria-hidden="true"><canvas id="menu-ship" width="96" height="96"></canvas><span>ND–01 / AURORA</span></div>
           <p id="panel-label" class="eyebrow">PROTOCOLO DE DEFENSA</p>
-          <h2 id="panel-title">PILOTO, TE ESPERAMOS.</h2>
-          <p id="panel-text">Defiende la órbita. Elimina la formación invasora.</p>
-          <button id="primary" class="primary" type="button">INICIAR MISIÓN <span>→</span></button>
-          <button id="restart" class="secondary" type="button" hidden>Reiniciar misión</button>
+          <h2 id="panel-title">LA GALAXIA TE NECESITA.</h2>
+          <p id="panel-text">Tres vidas. Cuatro sectores. Una última oportunidad.</p>
+          <dl id="result-summary" class="result-summary" hidden>
+            <div><dt>PUNTUACIÓN</dt><dd id="result-score">000000</dd></div>
+            <div><dt>SECTOR</dt><dd id="result-level">01 / 04</dd></div>
+            <div><dt>VIDAS</dt><dd id="result-lives">3 / 3</dd></div>
+          </dl>
+          <p id="new-record" class="record-badge" hidden>✦ NUEVO RÉCORD PERSONAL</p>
+          <button id="primary" class="primary" type="button">JUGAR · INICIAR MISIÓN →</button>
+          <button id="restart" class="secondary" type="button" hidden>Reiniciar campaña</button>
+          <div id="menu-options" class="menu-options"><button type="button" data-dialog="help-dialog">Cómo jugar</button><button type="button" data-dialog="settings-dialog">Ajustes de sonido</button></div>
           <p class="panel-note">A / D · MOVER &nbsp; ESPACIO · DISPARAR</p>
         </section>
       </div>
@@ -37,8 +60,29 @@
     <nav class="controls" aria-label="Controles"><span><kbd>←</kbd><kbd>→</kbd> o <kbd>A</kbd><kbd>D</kbd> Mover</span><span><kbd>ESPACIO</kbd> Disparar</span><span><kbd>P</kbd><kbd>ESC</kbd> Pausa</span></nav>
     <p id="debug-note" class="debug-note" hidden>DEBUG · 1–4: iniciar sector con 3 vidas y 0 puntos · No guarda récords</p>
     <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
-    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><a href="sprites-preview.html">ATLAS DE SPRITES ↗</a><span>FASE 03 · CAMPAÑA</span></footer>
+    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><a href="sprites-preview.html">ATLAS DE SPRITES ↗</a><span>FASE 04 · INTERFAZ Y AUDIO</span></footer>
   </main>
+  <dialog id="help-dialog" class="mission-dialog" aria-labelledby="help-title">
+    <p class="eyebrow">MANUAL DE VUELO / ND–01</p>
+    <h2 id="help-title">Prepárate para despegar.</h2>
+    <p>Defiende cuatro sectores y destruye a Némesis. Dispones de tres vidas: esquiva el plasma y evita que los invasores alcancen tu zona.</p>
+    <div class="help-controls"><div><kbd>← →</kbd><kbd>A D</kbd><span>Mover la nave</span></div><div><kbd>ESPACIO</kbd><span>Disparar · mantén pulsado</span></div><div><kbd>P</kbd><kbd>ESC</kbd><span>Pausar o continuar</span></div></div>
+    <h3>Recoge energía. Cambia el combate.</h3>
+    <ul class="help-powers"><li><strong>DOBLE</strong><span>Dos proyectiles paralelos.</span></li><li><strong>RÁPIDO</strong><span>Mayor cadencia de disparo.</span></li><li><strong>ESCUDO</strong><span>Bloquea los disparos enemigos.</span></li></ul>
+    <p class="dialog-note">Las mejoras duran <span id="help-power-duration">8</span> segundos y sus efectos se combinan. Tras un impacto tienes protección temporal. Una invasión consume una vida incluso con escudo y reinicia el sector.</p>
+    <form method="dialog"><button class="primary" type="submit" autofocus>ENTENDIDO →</button></form>
+  </dialog>
+  <dialog id="settings-dialog" class="mission-dialog" aria-labelledby="settings-title">
+    <p class="eyebrow">SISTEMAS DE CABINA</p>
+    <h2 id="settings-title">Ajustes de sonido</h2>
+    <div class="sound-setting"><div><strong>Efectos de sonido</strong><p>Disparos, impactos y señales de misión.</p></div><button type="button" data-sound-toggle aria-pressed="true">Sonido activado</button></div>
+    <label class="volume-label" for="volume">Volumen de efectos <output id="volume-value" for="volume">40 %</output></label>
+    <input id="volume" type="range" min="0" max="100" step="1" value="40">
+    <p id="audio-status" class="dialog-note" role="status">El audio se activa al pulsar Jugar. Tu preferencia se guarda en este navegador.</p>
+    <button id="audio-preview" class="secondary" type="button" disabled>Probar sonido</button>
+    <p class="dialog-note">Al abrir instrucciones o ajustes durante una misión, el juego queda en pausa. Ciérralos y pulsa Continuar cuando estés listo.</p>
+    <form method="dialog"><button class="primary" type="submit" autofocus>GUARDAR Y VOLVER →</button></form>
+  </dialog>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

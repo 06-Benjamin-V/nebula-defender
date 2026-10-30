@@ -1,6 +1,6 @@
 import { CONFIG } from './config.js';
 import { ANIMATIONS } from './sprite-data.js';
-/** Solo secuencias de sprites en esta fase; partículas y cámara se incorporan en Fase 4. */
+/** Secuencias de sprites; las partículas y la cámara tienen módulos independientes. */
 export class Effects {
   constructor() { this.items = []; }
   add(type, x, y, scale = 1) {
