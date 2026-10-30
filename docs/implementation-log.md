@@ -68,3 +68,9 @@ Verificaciones reales:
 - Recursos comprobados por HTTP con respuesta 200: página principal, `css/dialogs.css` y los módulos nuevos de audio, cámara, partículas y diálogos. Se retiró una línea vacía final detectada por `git diff --check`; la comprobación final quedó sin errores de espacios.
 
 Pendientes: escucha y valoración del volumen en el equipo del estudiante, prueba con movimiento reducido real y revisión responsive/accesibilidad de Fase 5. No se completó manualmente la campaña entera en esta fase ni se midieron FPS sostenidos. Los controles táctiles y la documentación académica final siguen reservados para la Fase 5, que requiere confirmación.
+
+## Corrección de Fase 4 antes de Fase 5 — Inicio del audio
+
+El estudiante informó que el audio empezaba segundos después de la partida y autorizó corregirlo y continuar con Fase 5. Codex encontró que `begin()` arrancaba la simulación sin esperar la promesa de `AudioContext.resume()`. Ahora Jugar y Continuar esperan esa confirmación, muestran «Preparando misión», comparten un único desbloqueo y cancelan respuestas tardías si se pierde foco o se abre un diálogo. El contexto solicita latencia interactiva y una espera acotada de tres segundos permite continuar en silencio si el dispositivo no responde.
+
+Verificación real: `node --test tests/*.test.mjs`, 37 pruebas aprobadas. Las cinco nuevas reproducen reanudación lenta, llamadas simultáneas, dispositivo sin respuesta, sincronización de inicio, cancelación tardía y continuidad de una partida pausada. Son pruebas de control de flujo; la escucha en el equipo del estudiante sigue pendiente.

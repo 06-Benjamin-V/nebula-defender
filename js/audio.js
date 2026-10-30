@@ -3,10 +3,11 @@ import { CONFIG } from './config.js';
 export class Audio {
   constructor({ provider = () => globalThis.localStorage, factory = () => {
     const Context = globalThis.AudioContext || globalThis.webkitAudioContext;
-    return Context ? new Context() : null;
-  }, onChange = () => {} } = {}) {
+    return Context ? new Context({ latencyHint: 'interactive' }) : null;
+  }, onChange = () => {}, startupTimeoutMs = CONFIG.audio.startupTimeoutMs } = {}) {
     this.provider = provider; this.factory = factory; this.onChange = onChange;
     this.context = null; this.master = null; this.allowed = false; this.available = true;
+    this.startupTimeoutMs = startupTimeoutMs; this.pendingUnlock = null;
     this.muted = false; this.volume = CONFIG.audio.defaultVolume;
     this.voices = new Set(); this.lastPlayed = new Map();
     try {
@@ -25,7 +26,12 @@ export class Audio {
   }
   async unlock() {
     this.allowed = true;
-    if (this.muted || !this.available) { this.onChange(this); return; }
+    if (this.muted || !this.available) { this.onChange(this); return false; }
+    if (!this.pendingUnlock) this.pendingUnlock = this.prepare().finally(() => { this.pendingUnlock = null; });
+    return this.pendingUnlock;
+  }
+  async prepare() {
+    let timeout;
     try {
       if (!this.context) {
         this.context = this.factory();
@@ -34,9 +40,17 @@ export class Audio {
         this.applyVolume();
       }
       if (this.context.state === 'closed') throw new Error('Audio cerrado');
-      if (this.context.state === 'suspended') await this.context.resume();
+      if (this.context.state !== 'running') {
+        await Promise.race([
+          this.context.resume(),
+          new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Audio sin respuesta')), this.startupTimeoutMs); }),
+        ]);
+      }
+      if (this.context.state !== 'running') throw new Error('Audio todavía suspendido');
     } catch { this.available = false; this.stopAll(); }
+    finally { clearTimeout(timeout); }
     this.onChange(this);
+    return this.available && this.context?.state === 'running';
   }
   applyVolume() {
     if (!this.master) return;

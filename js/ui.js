@@ -27,6 +27,12 @@ export class UI {
     document.querySelector('#help-power-duration').textContent = CONFIG.powerUps.duration;
   }
   get dialogOpen() { return this.dialogs.isOpen; }
+  setStarting(value) {
+    this.starting = value;
+    this.primary.disabled = value; this.restart.disabled = value;
+    if (value) this.primary.textContent = 'PREPARANDO MISIÓN…';
+    else this.render(this.currentState);
+  }
   setHero(sprites) {
     const ctx = document.querySelector('#menu-ship').getContext('2d'); ctx.imageSmoothingEnabled = false;
     sprites.draw(ctx, 'player', 16, 8, 4); sprites.draw(ctx, 'thrust0', 32, 68, 4);
@@ -42,7 +48,7 @@ export class UI {
     if (this.volume.value !== volume) this.volume.value = volume;
     this.volumeValue.textContent = volume + ' %';
     this.preview.disabled = !audio.allowed || !audio.available || audio.muted || audio.volume === 0 || audio.context?.state !== 'running';
-    const status = !audio.available ? 'El audio no está disponible en este navegador. Puedes seguir jugando en silencio.'
+    const status = !audio.available ? 'No se pudo iniciar el audio. Puedes seguir jugando en silencio.'
       : !audio.allowed ? 'El audio se activa al pulsar Jugar. Tu preferencia se guarda en este navegador.'
       : audio.muted ? 'Sonido silenciado. Tu preferencia está guardada en este navegador.'
       : audio.volume === 0 ? 'Volumen a cero. Súbelo para escuchar los efectos.'
@@ -77,6 +83,7 @@ export class UI {
     this.text('level-name', levels.spec.name);
   }
   render(state) {
+    this.currentState = state;
     const playing = state === STATES.PLAYING;
     this.overlay.hidden = playing;
     this.overlay.dataset.state = state;

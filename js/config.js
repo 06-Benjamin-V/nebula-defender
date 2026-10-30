@@ -34,6 +34,7 @@ export const CONFIG = {
     shake: { damage: { strength: 2, duration: 0.24 }, heavy: { strength: 1, duration: 0.12 }, boss: { strength: 3, duration: 0.4 } } },
   // Audio sintetizado. Volumen maestro moderado, límite de voces y cadencia mínima por efecto.
   audio: { defaultVolume: 0.4, masterGain: 0.22, maxVoices: 12, minInterval: 0.045, attack: 0.006,
+    startupTimeoutMs: 3000, // Espera máxima de activación del dispositivo antes de continuar en silencio.
     cues: {
       fire: [{ frequency: 880, end: 180, duration: 0.075, wave: 'square', gain: 0.08 }],
       impact: [{ frequency: 170, end: 65, duration: 0.055, wave: 'triangle', gain: 0.15 }],

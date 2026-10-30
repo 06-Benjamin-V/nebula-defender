@@ -14,6 +14,7 @@ import { Camera } from './camera.js';
 export class Game {
   constructor(canvas) {
     this.canvas = canvas;
+    this.launchId = 0; this.starting = false;
     this.ctx = canvas.getContext('2d'); this.ctx.imageSmoothingEnabled = false;
     this.debug = new URLSearchParams(location.search).get('debug') === '1';
     this.sprites = new Sprites(); this.background = new Background(); this.effects = new Effects();
@@ -35,6 +36,7 @@ export class Game {
     this.reset(); this.ui.render(STATES.MENU);
     document.querySelector('#debug-note').hidden = !this.debug;
     const autoPause = () => {
+      this.cancelStart();
       this.audio.stopAll();
       if (this.state.value === STATES.PLAYING) {
         this.autoPausing = true; this.state.set(STATES.PAUSED); this.autoPausing = false;
@@ -53,12 +55,24 @@ export class Game {
     if (number !== 1) this.session.loadLevel(number);
     this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }
-  begin() {
-    // Este método se invoca desde Jugar/Reintentar; debug no desbloquea audio por sí solo.
-    void this.audio.unlock().then(() => {
-      if (this.state.value === STATES.PLAYING && !document.hidden && !this.ui.dialogOpen) this.audio.play('start');
-    });
-    this.start();
+  begin() { return this.prepareMission(false); }
+  async prepareMission(resume) {
+    if (this.starting) return;
+    const launch = ++this.launchId;
+    this.starting = true; this.ui.setStarting(true);
+    // El dispositivo se activa dentro del gesto del usuario; la simulación espera su confirmación.
+    if (!resume || this.audio.allowed) await this.audio.unlock();
+    if (launch !== this.launchId) return;
+    this.starting = false; this.ui.setStarting(false);
+    if (document.hidden || this.ui.dialogOpen) return;
+    if (resume) {
+      this.state.set(STATES.PLAYING); this.canvas.focus({ preventScroll: true });
+    } else this.start();
+    this.audio.play(resume ? 'select' : 'start');
+  }
+  cancelStart() {
+    this.launchId++;
+    if (this.starting) { this.starting = false; this.ui.setStarting(false); }
   }
   transition(value) {
     this.input.clear(); this.audio.stopAll();
@@ -67,24 +81,24 @@ export class Game {
     this.ui.render(value); this.ui.sync(this.session, value, this.recordAtStart);
   }
   pauseForDialog() {
+    this.cancelStart();
     this.input.clear(); this.audio.stopAll();
     if (this.state.value === STATES.PLAYING) {
       this.autoPausing = true; this.state.set(STATES.PAUSED); this.autoPausing = false;
     }
   }
   start(number = 1) {
+    this.cancelStart();
     this.reset(number);
     if (this.state.value !== STATES.PLAYING) this.state.set(STATES.PLAYING);
     this.ui.render(STATES.PLAYING);
     this.canvas.focus({ preventScroll: true });
   }
   togglePause() {
-    if (this.ui.dialogOpen) return;
+    if (this.ui.dialogOpen || this.starting) return;
     if (this.state.value === STATES.PLAYING) this.state.set(STATES.PAUSED);
     else if (this.state.value === STATES.PAUSED) {
-      if (this.audio.allowed) void this.audio.unlock();
-      this.state.set(STATES.PLAYING);
-      this.canvas.focus({ preventScroll: true });
+      void this.prepareMission(true);
     }
   }
   effect(type, entity) {
