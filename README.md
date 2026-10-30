@@ -35,9 +35,9 @@ Abrir http://127.0.0.1:8000. Detener el servidor con Ctrl+C. El servidor de Node
 - Reintentar después de ganar o perder empieza una campaña limpia; también se puede reiniciar desde pausa.
 - En dispositivos táctiles aparecen botones de izquierda, derecha y disparo. Mantén una dirección y Disparar con dos dedos; al soltar o cancelar un toque se libera esa acción. En menú y pausa están deshabilitados.
 
-## Estado: develop — cinco niveles y vista ampliada
+## Estado: develop — dos rutas, diez sectores y dos naves
 
-Campaña jugable de cinco sectores. Los sectores 1–3 contienen 24 invasores cada uno; el cuarto reúne 32 enemigos de las tres especies y el quinto es exclusivo del jefe.
+Campaña de dos rutas consecutivas de cinco sectores. Némesis protege el sector 5; al derrotarlo se reparan las vidas hasta el máximo de la nave y se abre la ruta II. Eclipse protege el sector 10 y es el único que concede la victoria final. Las vidas, mejoras y puntuación pertenecen a la misma campaña.
 
 | Sector | Contenido y diferencia |
 | --- | --- |
@@ -46,8 +46,17 @@ Campaña jugable de cinco sectores. Los sectores 1–3 contienen 24 invasores ca
 | 3 · Bastión carmesí | Centinelas de dos impactos con desplazamiento lateral y abanico triple, mezclados con espectros; formación más rápida. |
 | 4 · Umbral del Vacío | Cuatro filas de centinelas, espectros y exploradores; velocidad de 43 px/s, descenso de 12 px y hasta 12 disparos enemigos. Última formación antes del reactor. |
 | 5 · Némesis | Jefe de 80 puntos de salud, patrulla lateral, abanicos y torretas dirigidas alternados. Al 50 % de salud, aumenta velocidad, cadencia y amplitud del abanico. Barra de salud y breve aviso visual antes del disparo. |
+| 6 · Ecos de Andrómeda | 32 exploradores y espectros, nueva nebulosa cálida y comienzo de la ruta II. |
+| 7 · Fisura iónica | 32 enemigos mixtos, centinelas superiores y hasta 13 proyectiles. |
+| 8 · Forja obsidiana | Dos filas de centinelas y dos de espectros; blindaje y presión dirigida. |
+| 9 · Flota del Eclipse | 32 enemigos, avance a 48 px/s y hasta 15 proyectiles; última formación. |
+| 10 · Eclipse | Salud 140, oscilación vertical, abanicos de 5/7 disparos, torretas y ráfagas dirigidas de cinco proyectiles. Cadencia de 0,95 s y 0,62 s en furia; límite de 24 disparos. Sprite de corona y reactor anular propio. |
 
-Al vaciar una formación se limpia el campo de proyectiles y cápsulas y comienza el siguiente sector, con una introducción de 1,5 segundos. Durante ella puedes mover la nave, pero no hay disparos. La victoria se obtiene únicamente al destruir a Némesis. Cada nueva campaña comienza con tres vidas y cero puntos.
+Al vaciar un sector se limpia el campo de proyectiles y cápsulas y comienza el siguiente, con una introducción de 1,5 segundos. Durante ella puedes mover la nave, pero no hay disparos. Cada nueva campaña comienza con las vidas de la nave elegida y cero puntos.
+
+### Hangar
+
+Abre **Naves** en la barra superior o **Elegir nave** en el menú. Aurora tiene tres vidas, velocidad de 235 px/s y un disparo cada 0,24 s. Cometa tiene sprite propio, dos vidas, velocidad de 300 px/s y un disparo cada 0,18 s; su caja de colisión también es algo más estrecha. Ambas admiten todas las mejoras. La selección persiste en el navegador y afecta al siguiente inicio/reinicio; nunca modifica la nave que ya está en combate.
 
 ### Vidas y mejoras
 
@@ -61,7 +70,7 @@ Al vaciar una formación se limpia el campo de proyectiles y cápsulas y comienz
 
 ### Puntuación y récord
 
-Explorador: 100 puntos; espectro: 150; centinela: 250; Némesis: 3.000. Una campaña sin repetir sectores por invasión suma **19.000 puntos**. Cada baja puntúa una sola vez y el jefe solo concede puntos al ser destruido.
+Explorador: 100 puntos; espectro: 150; centinela: 250; Némesis: 3.000; Eclipse: 6.000. Una campaña sin repetir sectores por invasión suma **47.000 puntos**. Cada baja puntúa una sola vez y cada jefe solo concede puntos al ser destruido.
 
 El récord se guarda en `localStorage`, con acceso protegido por `try/catch` y validación del valor leído. Si no hay almacenamiento disponible, se mantiene en memoria durante la sesión. Se conserva al reiniciar la campaña. El récord pertenece al origen: `localhost` y `127.0.0.1` mantienen registros separados.
 
@@ -96,7 +105,7 @@ Para probar en un teléfono físico, ejecuta el servidor Python en el equipo y a
 
 ## Arte y galería
 
-Abrir http://localhost:8000/sprites-preview.html o http://127.0.0.1:8000/sprites-preview.html. También hay un enlace «Atlas de sprites» al pie del juego.
+Abrir http://localhost:8000/sprites-preview.html o http://127.0.0.1:8000/sprites-preview.html. El botón **Atlas de sprites** está en la barra superior y abre la galería en otra pestaña. Incluye Cometa y Eclipse: 16 entradas en total.
 
 Sprites originales como matrices de caracteres que indexan una paleta: nave de 16×16, tres especies de 12×12 con dos frames cada una, jefe de 48×32, proyectiles de 3×7, mejoras de 10×10 y explosión de cuatro frames. La propulsión, los destellos y los impactos también usan secuencias originales.
 
@@ -118,7 +127,8 @@ js/
   engine.js             Loop, render y conexión con interfaz/input
   session.js            Simulación de una campaña, sin DOM
   state.js              Menú, jugando, pausa, victoria y derrota
-  levels.js             Construcción y transición de los cinco sectores
+  levels.js             Construcción y transición de los diez sectores
+  ships.js              Selección persistente y validación de la nave
   player.js             Movimiento, vidas, protección y mejoras activas
   enemies.js            Formación, especies y sus patrones de disparo
   boss.js               Movimiento, fases, torretas y abanicos de Némesis
@@ -148,7 +158,7 @@ Reiniciar crea una sesión limpia y descarta entidades y efectos anteriores; no 
 
 ## Debug y verificación
 
-Abrir http://127.0.0.1:8000/?debug=1. Muestra FPS y hitboxes; las teclas **1, 2, 3, 4 y 5** (también numpad) inician directamente ese sector con tres vidas, cero puntos y sin mejoras. Funcionan desde menú, pausa o partida terminada. En modo normal no hacen nada. Las partidas debug no modifican el récord.
+Abrir http://127.0.0.1:8000/?debug=1. Muestra FPS y hitboxes; las teclas **1–9** inician esos sectores y **0** inicia el 10, también con numpad. Usan la nave seleccionada, cero puntos y ninguna mejora. Funcionan desde menú, pausa o partida terminada. En modo normal no hacen nada. Las partidas debug no modifican el récord.
 
 Con Node.js 24:
 
@@ -158,11 +168,11 @@ node tools/simulate-campaign.mjs
 node tools/check-project.mjs
 ```
 
-Las 45 pruebas cubren arte y caché, colisiones, resistencia, introducción/transiciones de cinco sectores, vidas, invulnerabilidad, mejoras, límites de disparos, jefe, reinicio y almacenamiento. Incluyen audio diferido/sincronizado, música, silencio/volumen, limpieza de voces, fallos de compatibilidad, partículas, vibración, diálogos, bloqueo de flechas, punteros simultáneos, cancelación/rotación y proporción del campo incluso por encima de escala ×2. El audio y los eventos táctiles se comprueban con dobles: esas pruebas no equivalen a una escucha ni a una prueba física con dos dedos. Las pruebas de transición colocan proyectiles controlados para verificar cada baja; no son partidas humanas.
+Las 50 pruebas cubren arte, caché, colisiones, diez transiciones, ambos jefes, vidas, mejoras, reinicio y almacenamiento. Verifican la reparación tras Némesis, la victoria exclusiva de Eclipse y el total de 47.000 puntos. Incluyen diferencias de velocidad/cadencia/vidas entre naves, selección persistente sin modificar sesiones activas, audio, música, diálogos, teclado, punteros simultáneos y proporción del campo. El audio y los eventos táctiles se comprueban con dobles: no equivalen a una escucha ni a una prueba física con dos dedos. Las pruebas completas de transición usan proyectiles controlados; no son partidas humanas.
 
-`check-project.mjs` comprueba 66 referencias locales/importaciones, identificadores HTML únicos, ausencia de referencias remotas en las páginas y las seis combinaciones de contraste indicadas arriba. No instala dependencias ni modifica archivos.
+`check-project.mjs` comprueba 69 referencias locales/importaciones, identificadores HTML únicos, ausencia de referencias remotas en las páginas y las seis combinaciones de contraste indicadas arriba. No instala dependencias ni modifica archivos.
 
-El diagnóstico adicional ejecuta un controlador automático sobre la misma simulación a pasos de 1/60 s, con tres semillas reproducibles y sin modificar daño o salud. En develop, las semillas 1 y 3 ganaron en 84 y 85 segundos simulados, con dos vidas y 19.000 puntos; la semilla 2 perdió en el sector 4 a los 58 segundos, con 14.050 puntos. El diagnóstico devuelve código 1 si alguna simulación pierde. Esto no mide FPS ni demuestra una dificultad adecuada para cualquier jugador.
+El diagnóstico adicional ejecuta un controlador automático a pasos de 1/60 s, con tres semillas y sin modificar daño o salud. Admite `node tools/simulate-campaign.mjs comet` o `aurora`. Con la campaña de diez sectores, Aurora perdió en los sectores 8, 4 y 10; Cometa perdió en 8, 4 y 4. No se obtuvo victoria con este controlador. La ruta completa sí se valida en pruebas de colisión/transición controladas. El diagnóstico devuelve código 1 si alguna simulación pierde; no mide FPS ni sustituye una evaluación de dificultad con jugadores humanos.
 
 Codex abrió la versión de Fase 3 en navegador y comprobó accesos debug a sectores 2–4, pausa/continuación, HUD, daño a Némesis (78/80 al consultar la barra), pérdida de vidas y derrota. En una partida normal obtuvo 800 puntos y comprobó que el récord de 800 se conserva tras recargar, con puntuación de partida reiniciada a cero; la tecla 4 permaneció deshabilitada fuera de debug. Sin avisos ni errores del juego en los registros consultados. Tras un problema inicial de renderizado limitado, la sesión nueva mostró aproximadamente 60 FPS en capturas puntuales: no es una medición sostenida. No se completó manualmente toda la campaña en navegador.
 

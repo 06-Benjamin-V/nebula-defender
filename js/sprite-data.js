@@ -6,6 +6,13 @@ export const SPRITES = {
     '.dcddcbbbbcddcd.', '.cbbccbbbbccbbc.', 'wcbbbcwwwwcbbbcw', 'ccbbddddddddbbcc',
     '.cddcbccccbcddc.', '..ddccddddccdd..', '....dd....dd....', '................',
   ],
+  comet: [
+    '.......ww.......', '.......oo.......', '......owwo......', '......ommo......',
+    '.....dommod.....', '.....dowwod.....', '....odowwodo....', '...omdommodmo...',
+    '..ommdooodmmoo..', '.ommmdooodmmmmo.',
+    'ommmddowwoddmmmo', 'ommdddommodddmmo', '.oddddoooddddo..',
+    '..oddd...dddo...', '...oo.....oo....', '................',
+  ],
   thrust0: ['cw....wc', 'ow....wo', '.o....o.', '........'],
   thrust1: ['cw....wc', 'ow....wo', 'oo....oo', '.o....o.'],
   scout0: [
@@ -89,8 +96,24 @@ SPRITES.boss = bossHalf.map(row => {
   return half + [...half].reverse().join('');
 });
 
+// Eclipse: corona mecánica, alas dentadas y reactor anular, 48×32.
+SPRITES.eclipse = Array.from({ length: 32 }, (_, y) => Array.from({ length: 48 }, (_, x) => {
+  const dx = Math.abs(x - 23.5), dy = y - 16;
+  const radius = (dx / 14) ** 2 + (dy / 12) ** 2;
+  const wing = dx >= 13 && dx < 23 && y >= 9 + Math.floor((23 - dx) / 3) && y <= 23 - Math.floor((23 - dx) / 4);
+  const crown = y >= 2 && y <= 10 && (Math.abs(dx - 8) < 2 || (dx < 2 && y >= 5));
+  if (crown) return y < 5 ? 'w' : 'o';
+  if (wing) return x % 4 === 0 || y === 16 ? 'o' : 'm';
+  if (radius > 1) return '.';
+  if (radius > .77) return 'o';
+  if (radius > .48) return 'd';
+  if (radius > .3) return 'm';
+  if (radius > .13) return 'w';
+  return 'o';
+}).join(''));
+
 export const ANIMATIONS = {
-  player: ['player'], thrust: ['thrust0', 'thrust1'], scout: ['scout0', 'scout1'],
+  player: ['player'], comet: ['comet'], eclipse: ['eclipse'], thrust: ['thrust0', 'thrust1'], scout: ['scout0', 'scout1'],
   wraith: ['wraith0', 'wraith1'], sentinel: ['sentinel0', 'sentinel1'], boss: ['boss'],
   bullet: ['bullet'], enemyBullet: ['enemyBullet'], double: ['double'], rapid: ['rapid'], shield: ['shield'],
   muzzle: ['muzzle0', 'muzzle1'], impact: ['impact0', 'impact1'],

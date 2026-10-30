@@ -12,6 +12,7 @@ import { Particles } from './particles.js';
 import { Camera } from './camera.js';
 import { TouchControls } from './touch.js';
 import { Layout } from './layout.js';
+import { ShipSelection } from './ships.js';
 /** Un solo loop y listeners únicos; la sesión conserva toda la simulación comprobable sin DOM. */
 export class Game {
   constructor(canvas) {
@@ -23,6 +24,7 @@ export class Game {
     this.particles = new Particles(); this.camera = new Camera();
     this.audio = new Audio({ onChange: () => this.ui?.syncAudio(this.audio) });
     this.records = new Records();
+    this.shipSelection = new ShipSelection();
     this.motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
     this.state = new StateMachine(value => this.transition(value));
     this.input = new Input(() => this.togglePause(), this.debug ? number => this.start(number) : null);
@@ -34,8 +36,9 @@ export class Game {
       }, onVolume: volume => this.audio.setVolume(volume),
       onPreview: () => this.audio.play('power'), onSelect: () => this.audio.play('select'),
       beforeDialog: () => this.pauseForDialog(), afterDialog: () => this.input.clear(),
+      onSelectShip: id => { this.shipSelection.select(id); this.ui.setHero(this.sprites, this.shipSelection.value); },
     });
-    this.ui.setHero(this.sprites); this.ui.syncAudio(this.audio);
+    this.ui.setHero(this.sprites, this.shipSelection.value); this.ui.syncAudio(this.audio);
     this.reset(); this.ui.render(STATES.MENU);
     this.layout = new Layout(document.querySelector('.console'), document.querySelector('.viewport'));
     document.querySelector('#debug-note').hidden = !this.debug;
@@ -55,7 +58,7 @@ export class Game {
   reset(number = 1) {
     this.effects.items = []; this.particles.clear(); this.camera.reset(); this.artTime = 0; this.input.clear();
     this.audio.stopAll(); this.recordAtStart = this.records.score;
-    this.session = new Session({ debug: this.debug, records: this.records, onEvent: (type, entity) => this.effect(type, entity) });
+    this.session = new Session({ debug: this.debug, records: this.records, ship: this.shipSelection.value, onEvent: (type, entity) => this.effect(type, entity) });
     if (number !== 1) this.session.loadLevel(number);
     this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }
@@ -136,13 +139,13 @@ export class Game {
     const reduced = this.motionPreference.matches;
     ctx.fillStyle = CONFIG.background; ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
     ctx.save(); ctx.translate(this.camera.x, this.camera.y);
-    this.background.draw(ctx);
+    this.background.draw(ctx, levels.number > 5 ? 2 : 1);
     ctx.strokeStyle = '#1b3045'; ctx.setLineDash([3, 5]); ctx.beginPath();
     ctx.moveTo(0, player.y + player.height + 5); ctx.lineTo(CONFIG.width, player.y + player.height + 5); ctx.stroke(); ctx.setLineDash([]);
     ctx.save();
     if (player.invulnerability > 0) ctx.globalAlpha = reduced ? 0.6 : Math.floor(player.invulnerability / CONFIG.player.blinkInterval) % 2 ? 0.25 : 1;
     if (player.lives > 0) {
-      this.sprites.draw(ctx, 'player', player.x, player.y, CONFIG.player.scale);
+      this.sprites.draw(ctx, player.spec.sprite, player.x, player.y, CONFIG.player.scale);
       this.sprites.animate(ctx, 'thrust', player.x + 8, player.y + 30, 2, reduced ? 0 : this.artTime, CONFIG.art.thrustFrameInterval);
     }
     ctx.restore();
@@ -152,7 +155,7 @@ export class Game {
     for (const enemy of levels.formation?.enemies ?? []) this.sprites.animate(ctx, enemy.type, enemy.x, enemy.y, CONFIG.formation.scale, reduced ? 0 : this.artTime + enemy.column * 0.05);
     if (levels.boss?.alive) {
       const boss = levels.boss;
-      this.sprites.draw(ctx, 'boss', boss.x, boss.y, CONFIG.boss.scale);
+      this.sprites.draw(ctx, boss.spec.sprite, boss.x, boss.y, boss.spec.scale);
       if (boss.telegraphing) {
         ctx.fillStyle = boss.enraged ? CONFIG.palette.o : CONFIG.palette.m;
         for (const x of [boss.x + CONFIG.boss.turretInset, boss.x + boss.width - CONFIG.boss.turretInset]) ctx.fillRect(Math.round(x - 2), boss.y + boss.height - 4, 4, 4);
@@ -169,7 +172,7 @@ export class Game {
     ctx.restore();
     if (this.debug) {
       ctx.fillStyle = '#ecf8ff'; ctx.font = '9px monospace';
-      ctx.fillText('FPS ' + (dt > 0 ? Math.round(1 / dt) : 0) + ' · DEBUG 1–5 · SIN RÉCORD', 8, CONFIG.height - 5);
+      ctx.fillText('FPS ' + (dt > 0 ? Math.round(1 / dt) : 0) + ' · DEBUG 1–9 / 0=10 · SIN RÉCORD', 8, CONFIG.height - 5);
     }
     this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }

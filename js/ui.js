@@ -2,11 +2,11 @@ import { CONFIG } from './config.js';
 import { STATES } from './state.js';
 import { Dialogs } from './dialogs.js';
 export class UI {
-  constructor(onPrimary, onPause, onRestart, { onToggleSound, onVolume, onPreview, onSelect, beforeDialog, afterDialog } = {}) {
+  constructor(onPrimary, onPause, onRestart, { onToggleSound, onVolume, onPreview, onSelect, beforeDialog, afterDialog, onSelectShip } = {}) {
     this.overlay = document.querySelector('#overlay');
     this.primary = document.querySelector('#primary'); this.restart = document.querySelector('#restart');
     this.pause = document.querySelector('#pause');
-    this.nodes = Object.fromEntries(['score', 'record', 'lives', 'level', 'power-empty', 'power-double', 'power-rapid', 'power-shield', 'boss-panel', 'boss-health', 'boss-mode', 'level-banner', 'level-label', 'level-name', 'result-score', 'result-level', 'result-lives', 'new-record'].map(id => [id, document.getElementById(id)]));
+    this.nodes = Object.fromEntries(['score', 'record', 'lives', 'level', 'power-empty', 'power-double', 'power-rapid', 'power-shield', 'boss-panel', 'boss-health', 'boss-name', 'boss-mode', 'level-banner', 'level-label', 'level-name', 'result-score', 'result-level', 'result-lives', 'new-record'].map(id => [id, document.getElementById(id)]));
     this.primary.addEventListener('click', () => { onPrimary(); this.primary.blur(); });
     this.pause.addEventListener('click', () => { onPause(); this.pause.blur(); });
     this.restart.addEventListener('click', () => { onRestart(); this.restart.blur(); });
@@ -24,6 +24,7 @@ export class UI {
       if (button && !button.disabled && !button.hasAttribute('data-touch')) onSelect();
     });
     this.dialogs = new Dialogs(beforeDialog, afterDialog);
+    for (const button of document.querySelectorAll('[data-ship]')) button.addEventListener('click', () => onSelectShip(button.dataset.ship));
     document.querySelector('#help-power-duration').textContent = CONFIG.powerUps.duration;
   }
   get dialogOpen() { return this.dialogs.isOpen; }
@@ -34,9 +35,19 @@ export class UI {
     if (value) this.primary.textContent = 'PREPARANDO MISIÓN…';
     else this.render(this.currentState);
   }
-  setHero(sprites) {
+  setHero(sprites, id = 'aurora') {
+    const ship = CONFIG.ships[id];
     const ctx = document.querySelector('#menu-ship').getContext('2d'); ctx.imageSmoothingEnabled = false;
-    sprites.draw(ctx, 'player', 16, 8, 4); sprites.draw(ctx, 'thrust0', 32, 68, 4);
+    ctx.clearRect(0, 0, 96, 96);
+    sprites.draw(ctx, ship.sprite, 16, 8, 4); sprites.draw(ctx, 'thrust0', 32, 68, 4);
+    document.querySelector('#menu-emblem span').textContent = ship.name;
+    document.querySelector('#selected-ship').textContent = 'Próxima campaña: ' + ship.name;
+    for (const button of document.querySelectorAll('[data-ship]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.ship === id));
+      const preview = button.querySelector('canvas'), paint = preview.getContext('2d');
+      paint.imageSmoothingEnabled = false; paint.clearRect(0, 0, preview.width, preview.height);
+      sprites.draw(paint, CONFIG.ships[button.dataset.ship].sprite, 8, 8, 3);
+    }
   }
   syncAudio(audio) {
     for (const button of this.soundButtons) {
@@ -74,10 +85,11 @@ export class UI {
     }
     this.text('score', String(session.score).padStart(6, '0'));
     this.text('record', String(session.records.score).padStart(6, '0'));
-    this.text('lives', player.lives + ' / ' + CONFIG.player.lives);
+    this.text('lives', player.lives + ' / ' + player.maxLives);
+    document.querySelector('#lives').title = player.spec.name;
     this.text('result-score', String(session.score).padStart(6, '0'));
     this.text('result-level', String(levels.number).padStart(2, '0') + ' / ' + String(CONFIG.levels.length).padStart(2, '0'));
-    this.text('result-lives', player.lives + ' / ' + CONFIG.player.lives);
+    this.text('result-lives', player.lives + ' / ' + player.maxLives);
     this.nodes['new-record'].hidden = session.debug || session.score <= recordAtStart || ![STATES.VICTORY, STATES.DEFEAT].includes(state);
     this.text('level', String(levels.number).padStart(2, '0') + ' / ' + levels.spec.name);
     const labels = { double: 'DOBLE', rapid: 'RÁPIDO', shield: 'ESCUDO' };
@@ -88,12 +100,14 @@ export class UI {
     this.nodes['power-empty'].hidden = Object.values(player.powers).some(time => time > 0);
     this.nodes['boss-panel'].hidden = !levels.boss || state === STATES.MENU;
     if (levels.boss) {
-      this.nodes['boss-health'].max = CONFIG.boss.health;
+      this.nodes['boss-health'].max = levels.boss.maxHealth;
+      this.nodes['boss-health'].setAttribute('aria-label', 'Vida de ' + levels.boss.spec.name);
+      this.text('boss-name', levels.boss.spec.name + ' / REACTOR');
       this.nodes['boss-health'].value = Math.max(0, levels.boss.health);
       this.text('boss-mode', levels.boss.enraged ? 'REACTOR INESTABLE' : 'BLINDAJE ACTIVO');
     }
     this.nodes['level-banner'].hidden = levels.intro <= 0 || state !== STATES.PLAYING;
-    this.text('level-label', 'SECTOR ' + String(levels.number).padStart(2, '0'));
+    this.text('level-label', (levels.number > 5 ? 'RUTA II · ' : 'RUTA I · ') + 'SECTOR ' + String(levels.number).padStart(2, '0'));
     this.text('level-name', levels.spec.name);
   }
   render(state) {
@@ -108,9 +122,9 @@ export class UI {
     this.pause.textContent = state === STATES.PAUSED ? 'Continuar [P]' : 'Pausar [P]';
     this.restart.hidden = state !== STATES.PAUSED;
     const panels = {
-      menu: ['PROTOCOLO DE DEFENSA', 'LA GALAXIA TE NECESITA.', 'Tres vidas. Cinco sectores. Destruye a Némesis y protege la galaxia.', 'JUGAR · INICIAR MISIÓN →'],
+      menu: ['DOS RUTAS · DIEZ SECTORES', 'LA GALAXIA TE NECESITA.', 'Elige tu nave. Derrota a Némesis y cruza la segunda ruta hasta Eclipse.', 'JUGAR · INICIAR MISIÓN →'],
       paused: ['SEÑAL EN ESPERA', 'MISIÓN EN PAUSA', 'Respira. La galaxia puede esperar un momento.', 'CONTINUAR →'],
-      victory: ['NÉMESIS DESTRUIDA', 'GALAXIA A SALVO', 'Has superado los cinco sectores. La humanidad vuelve a ver las estrellas.', 'VOLVER A JUGAR →'],
+      victory: ['ECLIPSE DESTRUIDO', 'GALAXIA A SALVO', 'Has superado ambas rutas y los diez sectores. La humanidad vuelve a ver las estrellas.', 'VOLVER A JUGAR →'],
       defeat: ['SEÑAL PERDIDA', 'MISIÓN FALLIDA', 'No quedan naves de reserva. Vuelve a intentarlo, piloto.', 'REINTENTAR →'],
     };
     if (!playing) {

@@ -1,5 +1,13 @@
 # Registro de Codex
 
+## Develop — ruta II y hangar
+
+Se incorporaron los sectores 6–10: Ecos de Andrómeda, Fisura iónica, Forja obsidiana, Flota del Eclipse y Eclipse. Derrotar a Némesis en el 5 repara la nave y continúa la campaña; solo el segundo jefe concede victoria. Eclipse tiene 140 de salud, furia, oscilación vertical y tres patrones, con un máximo de 24 disparos. La ruta II tiene una nebulosa propia calculada una vez.
+
+El hangar ofrece Aurora y Cometa con sprites y estadísticas distintas; las preferencias se guardan de forma tolerante a fallos y solo afectan a nuevas campañas. Vida máxima, hitbox, cadencia, render y resumen usan la nave activa. El atlas se abrió desde un botón superior y se amplió con las dos matrices nuevas.
+
+Se verificaron 50 pruebas, revisión del hangar/atlas/sector 10 en navegador y cuatro tamaños de pantalla. Se registraron seis simulaciones reales del controlador (todas derrotas) sin presentarlas como victorias. El detalle y las limitaciones figuran en `testing.md`.
+
 ## Develop — ampliación de campaña y responsive
 
 Se conservaron los tres primeros sectores y se añadió Umbral del Vacío con 32 enemigos mixtos, cuatro filas y mayor presión de disparo. Némesis pasa al sector cinco. Menú, ayuda, resumen y atajos debug reflejan cinco sectores. La campaña completa concede 19.000 puntos.

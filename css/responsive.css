@@ -23,6 +23,8 @@ html:has(.game-page) { height: 100%; overflow: hidden; overscroll-behavior: none
 body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 .viewport { max-height: none; max-width: 100%; overflow: hidden; }
 .console-toolbar button, .hud button, .menu-options button { min-height: 40px; }
+.toolbar-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; font-size: 10px; color: var(--cyan); text-decoration: none; white-space: nowrap; }
+.console-toolbar > div { flex-wrap: wrap; }
 .skip-link { position: absolute; left: 16px; top: -80px; padding: 12px 18px; background: var(--cyan); color: #071820; z-index: 10; font-size: 13px; font-weight: bold; }
 .skip-link:focus { top: 12px; }
 @media (max-width: 760px) {
@@ -126,4 +128,8 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 /* También ofrece los controles en vistas móviles con ratón o dispositivos híbridos. */
 @media (max-width: 620px), (max-width: 1000px) and (max-height: 560px) and (orientation: landscape) {
   .touch-controls { display: flex; }
+}
+@media (max-width: 620px) and (orientation: portrait) {
+  .console-toolbar > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .console-toolbar .toolbar-link { grid-column: 1 / 3; }
 }

@@ -6,7 +6,7 @@ import { Effects } from '../js/effects.js';
 import { Background } from '../js/background.js';
 
 test('el atlas tiene dimensiones acordadas y cubre todos los frames originales', () => {
-  const dimensions = { player: [16, 16], scout: [12, 12], wraith: [12, 12], sentinel: [12, 12], boss: [48, 32], bullet: [3, 7], enemyBullet: [3, 7], double: [10, 10], rapid: [10, 10], shield: [10, 10], explosion: [16, 16] };
+  const dimensions = { player: [16, 16], comet: [16, 16], eclipse: [48, 32], scout: [12, 12], wraith: [12, 12], sentinel: [12, 12], boss: [48, 32], bullet: [3, 7], enemyBullet: [3, 7], double: [10, 10], rapid: [10, 10], shield: [10, 10], explosion: [16, 16] };
   const covered = new Set();
   for (const [name, frames] of Object.entries(ANIMATIONS)) {
     for (const frame of frames) {

@@ -7,9 +7,9 @@ import { updateProjectiles } from './projectiles.js';
 import { resolveCollisions } from './collisions.js';
 /** Simulación independiente del DOM; pausa y render pertenecen al motor. */
 export class Session {
-  constructor({ debug = false, records = new Records(), random = Math.random, onEvent = () => {} } = {}) {
+  constructor({ debug = false, records = new Records(), random = Math.random, onEvent = () => {}, ship = 'aurora' } = {}) {
     this.debug = debug; this.records = records; this.onEvent = onEvent;
-    this.player = new Player(); this.levels = new Levels(random); this.powerUps = new PowerUps(random);
+    this.player = new Player(ship); this.levels = new Levels(random); this.powerUps = new PowerUps(random);
     this.projectiles = []; this.score = 0; this.result = null;
   }
   loadLevel(number) {
@@ -26,7 +26,7 @@ export class Session {
     levels.update(dt, this.projectiles, player);
     updateProjectiles(this.projectiles, dt);
     const { playerHit, breach } = resolveCollisions(player, levels.targets, this.projectiles, enemy => {
-      this.score += enemy.type === 'boss' ? CONFIG.boss.points : CONFIG.enemies[enemy.type].points;
+      this.score += enemy.type === 'boss' ? enemy.spec.points : CONFIG.enemies[enemy.type].points;
       if (!this.debug) this.records.update(this.score);
       this.onEvent('kill', enemy);
       if (enemy.type !== 'boss') this.powerUps.drop(enemy);
@@ -44,7 +44,10 @@ export class Session {
     if (levels.formation) levels.formation.enemies = levels.formation.enemies.filter(enemy => enemy.alive);
     if (levels.cleared) {
       if (levels.number === CONFIG.levels.length) this.result = 'victory';
-      else this.loadLevel(levels.number + 1);
+      else {
+        if (levels.boss) { player.lives = player.maxLives; player.invulnerability = CONFIG.player.invulnerability; }
+        this.loadLevel(levels.number + 1);
+      }
     }
   }
 }

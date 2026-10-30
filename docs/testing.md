@@ -2,6 +2,14 @@
 
 Este registro describe comprobaciones efectivamente ejecutadas por Codex. No acredita pruebas del estudiante ni dispositivos que no se utilizaron.
 
+## Develop — segunda ruta, hangar y acceso al atlas
+
+- 50 pruebas aprobadas: diez sectores, victoria solo tras Eclipse, reparación tras Némesis hasta el máximo de cada nave, score completo de 47.000, cadencia y salud de Eclipse, selección persistente, diferencias de velocidad/cadencia/vidas y debug 0→10. Las pruebas de campaña usan colisiones controladas.
+- Navegador real: Atlas abre otra pestaña desde la barra superior y muestra 16 entradas, entre ellas Cometa y Eclipse. Hangar: se seleccionó Cometa, comenzó con 2/2 vidas y la preferencia persistió tras recarga. Eclipse aparece en debug con barra de 140/140 y nombre correcto. Se guardaron capturas `captures/develop-hangar.png` y `captures/develop-eclipse.png`.
+- Tamaños revisados: escritorio 1280×720, horizontal 844×390, vertical 390×844 y 320×568. La página mantiene scrollWidth/scrollHeight iguales al viewport; el hangar conserva desplazamiento interno cuando sus dos tarjetas se apilan. En 320×568, tras recargar la mejora de foco, el hangar abre con scrollTop 0 y foco en Aurora. Se restauró el tamaño normal al terminar.
+- Diagnóstico automático con Aurora: derrotas en sectores 8 (117 s simulados, 29.800 puntos), 4 (58 s, 14.050) y 10 (166 s, 41.000, Eclipse con 94 de salud). Cometa: derrotas en 8 (98 s, 31.850), 4 (35 s, 11.700) y 4 (50 s, 15.100). Sin cambios artificiales de daño/vidas. Ambas ejecuciones devuelven código 1 por las derrotas; no se afirma una victoria completa jugando en navegador.
+- Pendiente: balance con jugadores humanos y prueba física de dos dedos. La mayor dificultad del segundo jefe está comprobada por estadísticas, ataques y límites; la facilidad para completar ambas rutas depende de la habilidad del jugador.
+
 ## Develop — cinco sectores y campo ampliado
 
 - 45 pruebas automáticas aprobadas, incluida la transición completa 1→2→3→4→5, victoria solo tras Némesis y puntuación total de 19.000. El ajuste comprueba pantallas por encima de escala ×2.

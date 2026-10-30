@@ -3,11 +3,13 @@ import { Sprites, SPRITES, ANIMATIONS } from './sprites.js';
 
 const catalog = [
   ['player', 'ND–01 / AURORA', 'Nave defensora', 'Cabina de cristal, cañones laterales, blindaje azul y dos motores.'],
+  ['comet', 'ND–02 / COMETA', 'Interceptor ligero', 'Fuselaje afilado, alas magenta y blindaje naranja. Más velocidad y cadencia, dos vidas.'],
   ['thrust', 'MOTOR / ION', 'Propulsión', 'Dos estados de llama para los motores de la nave.'],
   ['scout', 'ESPECIE / 01', 'Explorador Prisma', 'Antenas de cian, sensores gemelos y patas articuladas. Disparo vertical, 100 puntos.'],
   ['wraith', 'ESPECIE / 02', 'Espectro Violeta', 'Alas segmentadas, oscilación vertical y disparos dirigidos hacia la nave.'],
   ['sentinel', 'ESPECIE / 03', 'Centinela Carmesí', 'Coraza magenta de dos impactos, visor naranja y disparo triple en abanico.'],
   ['boss', 'FORTALEZA / NÉMESIS', 'El guardián de la nebulosa', 'Fortaleza simétrica de 48×32: torretas con núcleos de energía y reactor central protegido.'],
+  ['eclipse', 'CORONA / ECLIPSE', 'El soberano del vacío', 'Corona dentada, alas de plasma y reactor anular. Jefe del sector 10, 140 de salud y ráfagas dirigidas.'],
   ['bullet', 'ARSENAL / ALIADO', 'Lanza de iones', 'Núcleo blanco con estela azul y cian.'],
   ['enemyBullet', 'ARSENAL / HOSTIL', 'Aguijón de plasma', 'Cabeza naranja, cápsula magenta y estela violeta.'],
   ['double', 'MEJORA / 01', 'Disparo doble', 'Cápsula de cian con dos haces paralelos.'],

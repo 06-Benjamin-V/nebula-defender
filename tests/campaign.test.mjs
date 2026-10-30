@@ -34,11 +34,12 @@ test('la introducción deja mover la nave y suspende disparos y enemigos; luego 
   assert.notEqual(run.levels.targets[0].x, initial);
 });
 
-test('la campaña tiene cinco sectores y avanza 1→2→3→4→5 antes de conceder victoria', () => {
+test('la campaña recorre diez sectores, supera Némesis y solo Eclipse concede victoria', () => {
   const run = session();
-  assert.equal(CONFIG.levels.length, 5);
+  assert.equal(CONFIG.levels.length, 10);
   assert.equal(CONFIG.levels[3].name, 'UMBRAL DEL VACÍO');
   assert.equal(CONFIG.levels[4].boss, true);
+  assert.equal(CONFIG.levels[9].boss, 'eclipse');
   for (let number = 1; number < CONFIG.levels.length; number++) {
     assert.equal(run.levels.number, number); clearStage(run);
     assert.equal(run.result, null); assert.equal(run.levels.number, number + 1);
@@ -47,7 +48,7 @@ test('la campaña tiene cinco sectores y avanza 1→2→3→4→5 antes de conce
   }
   clearStage(run);
   assert.equal(run.result, 'victory'); assert.equal(run.levels.boss.health, 0);
-  const expected = CONFIG.levels.filter(level => !level.boss).reduce((score, level) => score + level.rows.reduce((sum, type) => sum + CONFIG.enemies[type].points * CONFIG.formation.columns, 0), CONFIG.boss.points);
+  const expected = CONFIG.levels.filter(level => !level.boss).reduce((score, level) => score + level.rows.reduce((sum, type) => sum + CONFIG.enemies[type].points * CONFIG.formation.columns, 0), CONFIG.boss.points + CONFIG.finalBoss.points);
   assert.equal(run.score, expected); assert.equal(run.records.score, expected);
   run.update(1, { axis: 1, firing: true }); assert.equal(run.score, expected);
 });

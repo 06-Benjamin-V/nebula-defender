@@ -21,8 +21,10 @@
     <section class="heading"><p class="eyebrow">ÚLTIMA LÍNEA DE DEFENSA</p><h1>NEBULA <span>DEFENDER</span></h1><p>Una nave. Una misión. Ningún paso atrás.</p></section>
     <section class="console" aria-label="Juego arcade espacial">
       <nav class="console-toolbar" aria-label="Opciones de misión">
-        <span class="console-tag"><i aria-hidden="true"></i> NEBULA DEFENDER / 05 SECTORES</span>
+        <span class="console-tag"><i aria-hidden="true"></i> NEBULA DEFENDER / 10 SECTORES</span>
         <div>
+          <a class="toolbar-link" href="sprites-preview.html" target="_blank" rel="noopener" aria-label="Atlas de sprites, abre otra pestaña">Atlas de sprites ↗</a>
+          <button type="button" data-dialog="ship-dialog">Naves</button>
           <button type="button" data-dialog="help-dialog" aria-label="Abrir instrucciones">? <span>Cómo jugar</span></button>
           <button type="button" data-sound-toggle aria-pressed="true">Sonido activado</button>
           <button type="button" data-dialog="settings-dialog">Ajustes</button>
@@ -38,22 +40,22 @@
       <div class="power-bar" aria-label="Mejoras activas"><span id="power-empty">SIN MEJORAS ACTIVAS</span><span id="power-double" hidden></span><span id="power-rapid" hidden></span><span id="power-shield" hidden></span></div>
       <div class="viewport">
         <canvas id="game" width="480" height="320" tabindex="0" aria-label="Campo de batalla" aria-describedby="game-help"></canvas>
-        <div id="boss-panel" class="boss-panel" hidden><div><span>NÉMESIS / REACTOR</span><span id="boss-mode">BLINDAJE ACTIVO</span></div><progress id="boss-health" value="80" max="80" aria-label="Vida de Némesis"></progress></div>
+        <div id="boss-panel" class="boss-panel" hidden><div><span id="boss-name">NÉMESIS / REACTOR</span><span id="boss-mode">BLINDAJE ACTIVO</span></div><progress id="boss-health" value="80" max="80" aria-label="Vida de Némesis"></progress></div>
         <div id="level-banner" class="level-banner" hidden><span id="level-label">SECTOR 01</span><strong id="level-name">ÓRBITA EXTERIOR</strong><span>PREPARA LA DEFENSA</span></div>
         <section id="overlay" class="overlay" aria-labelledby="panel-title" data-state="menu">
           <div id="menu-emblem" class="menu-emblem" aria-hidden="true"><canvas id="menu-ship" width="96" height="96"></canvas><span>ND–01 / AURORA</span></div>
           <p id="panel-label" class="eyebrow">PROTOCOLO DE DEFENSA</p>
           <h2 id="panel-title">LA GALAXIA TE NECESITA.</h2>
-          <p id="panel-text">Tres vidas. Cinco sectores. Una última oportunidad.</p>
+          <p id="panel-text">Dos rutas. Diez sectores. Dos guardianes.</p>
           <dl id="result-summary" class="result-summary" hidden>
             <div><dt>PUNTUACIÓN</dt><dd id="result-score">000000</dd></div>
-            <div><dt>SECTOR</dt><dd id="result-level">01 / 05</dd></div>
+            <div><dt>SECTOR</dt><dd id="result-level">01 / 10</dd></div>
             <div><dt>VIDAS</dt><dd id="result-lives">3 / 3</dd></div>
           </dl>
           <p id="new-record" class="record-badge" hidden>✦ NUEVO RÉCORD PERSONAL</p>
           <button id="primary" class="primary" type="button">JUGAR · INICIAR MISIÓN →</button>
           <button id="restart" class="secondary" type="button" hidden>Reiniciar campaña</button>
-          <div id="menu-options" class="menu-options"><button type="button" data-dialog="help-dialog">Cómo jugar</button><button type="button" data-dialog="settings-dialog">Ajustes de sonido</button></div>
+          <div id="menu-options" class="menu-options"><button type="button" data-dialog="ship-dialog">Elegir nave</button><button type="button" data-dialog="help-dialog">Cómo jugar</button></div>
           <p class="panel-note">A / D · MOVER &nbsp; ESPACIO · DISPARAR</p>
         </section>
       </div>
@@ -64,21 +66,33 @@
       <footer class="console-footer"><span>◈ NAVE DEFENSORA / ND–01</span><span id="telemetry">EN ESPERA</span></footer>
     </section>
     <nav class="controls" aria-label="Controles"><span><kbd>←</kbd><kbd>→</kbd> o <kbd>A</kbd><kbd>D</kbd> Mover</span><span><kbd>ESPACIO</kbd> Disparar</span><span><kbd>P</kbd><kbd>ESC</kbd> Pausa</span></nav>
-    <p id="debug-note" class="debug-note" hidden>DEBUG · 1–5: iniciar sector con 3 vidas y 0 puntos · No guarda récords</p>
+    <p id="debug-note" class="debug-note" hidden>DEBUG · 1–9: sectores 1–9 · 0: sector 10 · Usa la nave seleccionada · No guarda récords</p>
     <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
     <p id="game-help" class="sr-only">A y D o flechas para moverte; Espacio para disparar; P o Escape para pausar. En pantallas táctiles, mantén pulsados los botones de dirección y disparo. El sonido puede silenciarse en la barra de opciones.</p>
-    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><a href="sprites-preview.html">ATLAS DE SPRITES ↗</a><span>CAMPAÑA COMPLETA / V1.0</span></footer>
+    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><span>DOS RUTAS / V2.0</span></footer>
   </main>
   <dialog id="help-dialog" class="mission-dialog" aria-labelledby="help-title">
     <p class="eyebrow">MANUAL DE VUELO / ND–01</p>
     <h2 id="help-title">Prepárate para despegar.</h2>
-    <p>Defiende cinco sectores y destruye a Némesis en el último. Dispones de tres vidas: esquiva el plasma y evita que los invasores alcancen tu zona.</p>
+    <p>Completa dos rutas consecutivas de cinco sectores: Némesis protege el sector 5 y Eclipse el 10. Tras vencer a Némesis se reparan las vidas de tu nave y continúa la campaña. Solo destruir a Eclipse concede la victoria final.</p>
+    <p>Aurora tiene tres vidas. Cometa tiene dos, pero es más rápida y dispara con mayor frecuencia. Elige en Naves antes de iniciar; cambiar la selección durante una misión afecta a la próxima campaña.</p>
     <div class="help-controls"><div><kbd>← →</kbd><kbd>A D</kbd><span>Mover la nave</span></div><div><kbd>ESPACIO</kbd><span>Disparar · mantén pulsado</span></div><div><kbd>P</kbd><kbd>ESC</kbd><span>Pausar o continuar</span></div></div>
     <p>En dispositivos táctiles, mantén pulsada una dirección y Disparar a la vez. Usa Pausar en la barra para detener la misión.</p>
     <h3>Recoge energía. Cambia el combate.</h3>
     <ul class="help-powers"><li><strong>DOBLE</strong><span>Dos proyectiles paralelos.</span></li><li><strong>RÁPIDO</strong><span>Mayor cadencia de disparo.</span></li><li><strong>ESCUDO</strong><span>Bloquea los disparos enemigos.</span></li></ul>
     <p class="dialog-note">Las mejoras duran <span id="help-power-duration">8</span> segundos y sus efectos se combinan. Tras un impacto tienes protección temporal. Una invasión consume una vida incluso con escudo y reinicia el sector.</p>
     <form method="dialog"><button class="primary" type="submit" autofocus>ENTENDIDO →</button></form>
+  </dialog>
+  <dialog id="ship-dialog" class="mission-dialog" aria-labelledby="ship-title">
+    <p class="eyebrow">HANGAR / SELECCIÓN DE NAVE</p>
+    <h2 id="ship-title">Elige cómo combatir.</h2>
+    <div class="ship-grid">
+      <button class="ship-card" type="button" data-ship="aurora" aria-pressed="true" autofocus><canvas width="64" height="64" aria-hidden="true"></canvas><strong>ND–01 / AURORA</strong><span>Equilibrada · 3 vidas</span><span>Velocidad: 235 px/s<br>Disparo: cada 0,24 s</span></button>
+      <button class="ship-card" type="button" data-ship="comet" aria-pressed="false"><canvas width="64" height="64" aria-hidden="true"></canvas><strong>ND–02 / COMETA</strong><span>Ágil · 2 vidas</span><span>Velocidad: 300 px/s<br>Disparo: cada 0,18 s</span></button>
+    </div>
+    <p id="selected-ship" role="status" class="dialog-note"></p>
+    <p class="dialog-note">La selección se guarda para la próxima campaña. Tu nave actual conserva sus vidas y características hasta reiniciar.</p>
+    <form method="dialog"><button class="primary" type="submit">LISTO PARA VOLAR →</button></form>
   </dialog>
   <dialog id="settings-dialog" class="mission-dialog" aria-labelledby="settings-title">
     <p class="eyebrow">SISTEMAS DE CABINA</p>

@@ -14,13 +14,21 @@ export class Background {
       glow.addColorStop(0, color); glow.addColorStop(1, '#080d1d00');
       ctx.fillStyle = glow; ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
     }
+    this.voidNebula = document.createElement('canvas'); this.voidNebula.width = CONFIG.width; this.voidNebula.height = CONFIG.height;
+    const voidCtx = this.voidNebula.getContext('2d');
+    voidCtx.fillStyle = CONFIG.background; voidCtx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+    for (const [x, y, color] of [[100, 65, '#a83a323b'], [390, 230, '#7b267c38']]) {
+      const glow = voidCtx.createRadialGradient(x, y, 0, x, y, 230);
+      glow.addColorStop(0, color); glow.addColorStop(1, '#080d1d00'); voidCtx.fillStyle = glow;
+      voidCtx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+    }
   }
   update(dt, reducedMotion) {
     if (reducedMotion) return;
     for (const layer of this.layers) for (const star of layer.stars) star.y = (star.y + layer.speed * dt) % CONFIG.height;
   }
-  draw(ctx) {
-    ctx.drawImage(this.nebula, 0, 0);
+  draw(ctx, route = 1) {
+    ctx.drawImage(route === 2 ? this.voidNebula : this.nebula, 0, 0);
     for (const layer of this.layers) {
       ctx.fillStyle = layer.color;
       for (const star of layer.stars) ctx.fillRect(Math.floor(star.x), Math.floor(star.y), 1, 1);
