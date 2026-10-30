@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b1c">
+  <title>NEBULA DEFENDER</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/hud.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead"><a href="./" class="brand">N<span>✦</span>D</a><span>ORBITAL DEFENSE SYSTEM / 01</span><span class="status">● SISTEMA EN LÍNEA</span></header>
+    <section class="heading"><p class="eyebrow">ÚLTIMA LÍNEA DE DEFENSA</p><h1>NEBULA <span>DEFENDER</span></h1><p>Una nave. Una misión. Ningún paso atrás.</p></section>
+    <section class="console" aria-label="Juego arcade espacial">
+      <div class="hud"><div><span>PUNTUACIÓN</span><strong id="score">000000</strong></div><div><span>SECTOR</span><strong>01 / ÓRBITA EXTERIOR</strong></div><button id="pause" type="button" disabled>Pausar <kbd>P</kbd></button></div>
+      <div class="viewport">
+        <canvas id="game" width="480" height="320" aria-label="Campo de batalla. Usa A y D o las flechas para moverte y espacio para disparar."></canvas>
+        <section id="overlay" class="overlay" aria-labelledby="panel-title">
+          <p id="panel-label" class="eyebrow">PROTOCOLO DE DEFENSA</p>
+          <h2 id="panel-title">PILOTO, TE ESPERAMOS.</h2>
+          <p id="panel-text">Defiende la órbita. Elimina la formación invasora.</p>
+          <button id="primary" class="primary" type="button">INICIAR MISIÓN <span>→</span></button>
+          <button id="restart" class="secondary" type="button" hidden>Reiniciar misión</button>
+          <p class="panel-note">A / D · MOVER &nbsp; ESPACIO · DISPARAR</p>
+        </section>
+      </div>
+      <footer class="console-footer"><span>◈ NAVE DEFENSORA / ND–01</span><span id="telemetry">EN ESPERA</span></footer>
+    </section>
+    <nav class="controls" aria-label="Controles"><span><kbd>←</kbd><kbd>→</kbd> o <kbd>A</kbd><kbd>D</kbd> Mover</span><span><kbd>ESPACIO</kbd> Disparar</span><span><kbd>P</kbd><kbd>ESC</kbd> Pausa</span></nav>
+    <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><span>FASE 01 · BASE JUGABLE</span></footer>
+  </main>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

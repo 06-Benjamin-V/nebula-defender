@@ -1,0 +1,1 @@
+button{transition:background .15s,box-shadow .15s,transform .15s}button:hover:not(:disabled){background:#253551;box-shadow:0 0 16px #64f4e522}.primary:hover:not(:disabled){background:#a3fff4;transform:translateY(-2px)}@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
