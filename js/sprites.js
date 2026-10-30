@@ -1,11 +1,6 @@
 import { CONFIG } from './config.js';
-// Arte provisional original. Cada carácter referencia la paleta compartida.
-export const SPRITES = {
-  player: ['.......cc.......','......cwwc......','......cbbc......','.....ccbbcc.....','.....cbbbbc.....','..c..cbbbbc..c..','..c.ccbbbbcc.c..','..cccbbwwbbccc..','.cccbbbwwbbbccc.','.ccbbbbbbbbbbcc.','cccbbccccccbbccc','ccbbccddddccbbcc','cccccc....cccccc','..cc.o....o.cc..','.....o....o.....','................'],
-  enemy: ['..pp....pp..','...pp..pp...','..pppppppp..','.pppppppppp.','ppwwppppwwpp','ppwwppppwwpp','pppppppppppp','..pp.pp.pp..','.pp..pp..pp.','pp........pp','..pp....pp..','............'],
-  bullet: ['.w.','cwc','cwc','ccc','ccc','.c.','.c.'],
-  enemyBullet: ['.m.','mmm','mom','mom','mmm','.m.','.m.'],
-};
+import { SPRITES, ANIMATIONS } from './sprite-data.js';
+export { SPRITES, ANIMATIONS };
 export class Sprites {
   constructor() {
     this.cache = new Map();
@@ -20,4 +15,8 @@ export class Sprites {
     }
   }
   draw(ctx, name, x, y, scale = 1) { const sprite = this.cache.get(name); ctx.drawImage(sprite, Math.round(x), Math.round(y), sprite.width * scale, sprite.height * scale); }
+  animate(ctx, name, x, y, scale, time, interval = CONFIG.art.enemyFrameInterval) {
+    const frames = ANIMATIONS[name];
+    this.draw(ctx, frames[Math.floor(time / interval) % frames.length], x, y, scale);
+  }
 }
