@@ -1,5 +1,11 @@
 # NEBULA DEFENDER
 
+## Fase 6 — Música y pantalla fija
+
+Tema original de 8 bits sintetizado localmente (melodía, arpegios y bajo, 132 BPM), sin descargas ni dependencias. Empieza con la partida; pausa, diálogos, pérdida de foco y final detienen la música. Sonido y volumen controlan tanto música como efectos.
+
+La pantalla principal ocupa el alto disponible y no se desplaza. Las cuatro flechas bloquean el desplazamiento fuera de campos y diálogos; el canvas conserva la proporción 3:2. El atlas y los diálogos largos mantienen su desplazamiento interno para poder consultar su contenido.
+
 Arcade espacial original con HTML5, CSS3, JavaScript ES modules y Canvas 2D. Sin frameworks, npm, compilación, fuentes remotas ni servicios externos. Desarrollo por fases para la evaluación de un curso de IA.
 
 ## Ejecutar

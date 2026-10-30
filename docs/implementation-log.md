@@ -93,3 +93,7 @@ Verificaciones reales:
 - Comprobación HTTP final: respuesta 200 para el juego, CSS táctil, módulos `touch`/`layout` y los tres documentos de entrega comprobados. La guía de acompañamiento tiene 153 palabras y solo contiene estructura/preguntas. La comprobación final de sintaxis y espacios quedó sin errores.
 
 Límites: el navegador conectado solo permite emular dimensiones, no dos dedos ni puntero grueso; no se realizó una prueba en teléfono físico. Tampoco se realizó auditoría con lector de pantalla, escucha en los parlantes del estudiante ni benchmark sostenido de 60 FPS. Estos pasos se identifican en `docs/testing.md`, sin atribuirlos al estudiante. La implementación de las cinco fases queda terminada; los apartados académicos personales permanecen deliberadamente para completar por el estudiante.
+
+## Fase 6 — ampliación solicitada
+
+Se añadió una composición chiptune original con reloj Web Audio, melodía cuadrada, arpegios y bajo triangular a 132 BPM. Comparte volumen y silencio con los efectos y se detiene en pausa, diálogo, pérdida de foco y final. La página principal es fija y Layout descuenta los elementos visibles para ajustar el canvas. Las cuatro flechas evitan el desplazamiento sin interferir con campos de formulario y diálogos. 45 pruebas aprobadas y verificación responsive real registrada en docs/testing.md.

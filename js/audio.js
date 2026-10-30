@@ -1,4 +1,5 @@
 import { CONFIG } from './config.js';
+import { Chiptune } from './music.js';
 /** Audio opcional y perezoso: solo unlock(), llamado desde Jugar/Reintentar, crea un contexto. */
 export class Audio {
   constructor({ provider = () => globalThis.localStorage, factory = () => {
@@ -10,6 +11,7 @@ export class Audio {
     this.startupTimeoutMs = startupTimeoutMs; this.pendingUnlock = null;
     this.muted = false; this.volume = CONFIG.audio.defaultVolume;
     this.voices = new Set(); this.lastPlayed = new Map();
+    this.music = new Chiptune(); this.musicWanted = false;
     try {
       this.muted = this.provider()?.getItem(CONFIG.storage.mutedKey) === 'true';
       const stored = this.provider()?.getItem(CONFIG.storage.volumeKey);
@@ -51,6 +53,7 @@ export class Audio {
     } catch { this.available = false; this.stopAll(); }
     finally { clearTimeout(timeout); }
     this.onChange(this);
+    this.updateMusic();
     return this.available && this.context?.state === 'running';
   }
   applyVolume() {
@@ -70,6 +73,13 @@ export class Audio {
   setVolume(value) {
     if (!Number.isFinite(value)) return;
     this.volume = Math.max(0, Math.min(1, value)); this.applyVolume(); this.save(); this.onChange(this);
+    this.updateMusic();
+  }
+  setMusic(active) { this.musicWanted = active; this.updateMusic(); }
+  updateMusic() {
+    if (!this.musicWanted || this.muted || this.volume === 0 || !this.available || this.context?.state !== 'running') { this.music.stop(); return; }
+    try { this.music.start(this.context, this.master); this.music.update(); }
+    catch { this.available = false; this.stopAll(); this.onChange(this); }
   }
   play(name) {
     const notes = CONFIG.audio.cues[name];
@@ -100,6 +110,7 @@ export class Audio {
     } catch { this.available = false; this.stopAll(); this.onChange(this); }
   }
   stopAll() {
+    this.music.stop();
     for (const { oscillator, gain } of this.voices) {
       try { oscillator.stop(); } catch { /* Puede haber finalizado antes de esta limpieza. */ }
       try { oscillator.disconnect(); gain.disconnect(); } catch { /* La desconexión puede haberse realizado antes. */ }

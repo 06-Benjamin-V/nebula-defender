@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body class="game-page">
   <a class="skip-link" href="#game">Ir al campo de juego</a>
   <main class="shell">
     <header class="masthead"><a href="./" class="brand">N<span>✦</span>D</a><span>ORBITAL DEFENSE SYSTEM / 01</span><span class="status">● SISTEMA EN LÍNEA</span></header>
@@ -83,8 +83,8 @@
   <dialog id="settings-dialog" class="mission-dialog" aria-labelledby="settings-title">
     <p class="eyebrow">SISTEMAS DE CABINA</p>
     <h2 id="settings-title">Ajustes de sonido</h2>
-    <div class="sound-setting"><div><strong>Efectos de sonido</strong><p>Disparos, impactos y señales de misión.</p></div><button type="button" data-sound-toggle aria-pressed="true">Sonido activado</button></div>
-    <label class="volume-label" for="volume">Volumen de efectos <output id="volume-value" for="volume">40 %</output></label>
+    <div class="sound-setting"><div><strong>Música y efectos</strong><p>Tema de 8 bits, disparos y señales de misión.</p></div><button type="button" data-sound-toggle aria-pressed="true">Sonido activado</button></div>
+    <label class="volume-label" for="volume">Volumen general <output id="volume-value" for="volume">40 %</output></label>
     <input id="volume" type="range" min="0" max="100" step="1" value="40">
     <p id="audio-status" class="dialog-note" role="status">El audio se activa al pulsar Jugar. Tu preferencia se guarda en este navegador.</p>
     <button id="audio-preview" class="secondary" type="button" disabled>Probar sonido</button>

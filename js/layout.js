@@ -21,8 +21,12 @@ export class Layout {
       const screenHeight = visual && visual.scale === 1 ? visual.height : window.innerHeight;
       const padding = getComputedStyle(document.body);
       const safeArea = (parseFloat(padding.paddingTop) || 0) + (parseFloat(padding.paddingBottom) || 0);
-      const gameBudget = Math.max(120, screenHeight - toolbar - hud - powers - footer - touch - safeArea - 24);
-      const height = compact || touch > 0 ? gameBudget : screenHeight * 0.66;
+      const shell = panel.parentElement;
+      const surroundings = [...shell.children].filter(child => child !== panel).reduce((total, child) => {
+        const style = getComputedStyle(child);
+        return total + child.offsetHeight + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+      }, 0);
+      const height = Math.max(0, screenHeight - surroundings - toolbar - hud - powers - footer - touch - safeArea - 16);
       const size = fitStage(Math.max(1, panel.clientWidth - sidebar - 2), height);
       const width = size.width + 'px', stageHeight = size.height + 'px';
       if (stage.style.width !== width) stage.style.width = width;
@@ -34,9 +38,6 @@ export class Layout {
     this.resize();
   }
   focusOnGame() {
-    if (!matchMedia('(any-pointer: coarse)').matches) return;
     this.resize();
-    const rect = this.panel.getBoundingClientRect();
-    if (rect.top < 0 || rect.bottom > window.innerHeight) this.panel.scrollIntoView({ block: 'start', behavior: 'auto' });
   }
 }

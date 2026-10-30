@@ -3,10 +3,11 @@ export class Input {
   constructor(onPause, onDebugLevel = null) {
     this.keys = new Set();
     this.touch = new Set();
-    const tracked = ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space', 'KeyP', 'Escape'];
+    const tracked = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyA', 'KeyD', 'Space', 'KeyP', 'Escape'];
     window.addEventListener('keydown', event => {
       const pauseKey = ['KeyP', 'Escape'].includes(event.code);
       const debugKey = onDebugLevel && /^(Digit|Numpad)[1-4]$/.test(event.code);
+      if (event.code.startsWith('Arrow') && !event.target.closest('input, textarea, select, dialog, [contenteditable="true"]')) event.preventDefault();
       if ((!tracked.includes(event.code) && !debugKey) || event.target.closest('input, textarea, select, dialog') || (!pauseKey && !debugKey && event.target.closest('button, a'))) return;
       event.preventDefault();
       if (debugKey) { if (!event.repeat) onDebugLevel(Number(event.code.at(-1))); return; }

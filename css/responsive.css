@@ -1,4 +1,20 @@
 /* El área lógica conserva 3:2; Layout calcula el tamaño sin deformar el canvas. */
+html:has(.game-page) { height: 100%; overflow: hidden; overscroll-behavior: none; }
+.game-page { height: 100dvh; min-height: 0; overflow: hidden; overscroll-behavior: none; }
+.game-page > .shell { height: 100%; }
+.game-page .heading { padding: 12px 0; }
+.game-page .masthead { height: 48px; }
+.game-page .controls { margin: 10px 0; }
+.game-page .page-footer { padding: 10px 0; }
+@media (max-height: 800px) {
+  .game-page .heading > p, .game-page .controls, .game-page .page-footer { display: none; }
+  .game-page .heading { padding: 4px 0; }
+  .game-page .heading h1 { margin: 6px 0; font-size: 25px; }
+}
+@media (max-width: 620px) {
+  .game-page .masthead, .game-page .heading, .game-page .controls, .game-page .page-footer { display: none; }
+  .game-page .console { margin-top: 6px; }
+}
 body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 .viewport { max-height: none; max-width: 100%; overflow: hidden; }
 .console-toolbar button, .hud button, .menu-options button { min-height: 40px; }

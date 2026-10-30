@@ -54,7 +54,7 @@ export class UI {
       : audio.muted ? 'Sonido silenciado. Tu preferencia está guardada en este navegador.'
       : audio.volume === 0 ? 'Volumen a cero. Súbelo para escuchar los efectos.'
       : audio.context?.state !== 'running' ? 'Preparando la salida de sonido…'
-      : 'Efectos de sonido listos. El volumen y el silencio se guardan automáticamente.';
+      : 'Música de 8 bits y efectos listos. El volumen y el silencio se guardan automáticamente.';
     if (this.audioStatus.textContent !== status) this.audioStatus.textContent = status;
   }
   text(id, value) { if (this.nodes[id].textContent !== value) this.nodes[id].textContent = value; }

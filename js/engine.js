@@ -81,6 +81,7 @@ export class Game {
   }
   transition(value) {
     this.input.clear(); this.audio.stopAll();
+    this.audio.setMusic(value === STATES.PLAYING);
     if (value === STATES.VICTORY || value === STATES.DEFEAT) this.audio.play(value);
     else if (value === STATES.PAUSED && !this.autoPausing && !document.hidden) this.audio.play('pause');
     this.ui.render(value); this.ui.sync(this.session, value, this.recordAtStart);
@@ -98,6 +99,7 @@ export class Game {
     this.reset(number);
     if (this.state.value !== STATES.PLAYING) this.state.set(STATES.PLAYING);
     this.ui.render(STATES.PLAYING);
+    this.audio.setMusic(true);
     this.canvas.focus({ preventScroll: true });
     this.layout?.focusOnGame();
   }
@@ -172,6 +174,7 @@ export class Game {
     this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }
   frame(time) {
+    this.audio.updateMusic();
     const rawDelta = this.lastTime === null ? 0 : (time - this.lastTime) / 1000;
     this.lastTime = time;
     const dt = Math.min(rawDelta, CONFIG.maxDelta);

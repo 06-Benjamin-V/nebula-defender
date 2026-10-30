@@ -57,3 +57,7 @@ Marca solamente lo que hagas tú y añade tu evidencia en `proceso_ia.md`:
 - Los récords y preferencias pertenecen a cada origen del navegador; `localhost` y `127.0.0.1` son distintos.
 - Al reconstruir un sector por invasión se conserva el puntaje y los enemigos repetidos pueden volver a puntuar, según las reglas documentadas.
 - La reflexión, los prompts de planificación previa y las intervenciones personales deben ser completados por el estudiante. Codex no los redactó en su nombre.
+
+## Fase 6: música y pantalla fija
+
+45 pruebas automáticas aprobadas. Nuevas comprobaciones de inicio inmediato de notas, ritmo sin acumulación tras interrupciones, pausa, silencio, volumen cero y prevención de desplazamiento con las cuatro flechas. 66 referencias locales verificadas. Navegador: inicio y pausa, audio indicado como listo, sin errores de consola; scrollY=0 y scrollHeight=innerHeight en escritorio (715 px de alto), 390×844, 320×568 y 844×390; consola completa dentro de la pantalla. Flechas arriba/abajo verificadas sin movimiento. La calidad auditiva y el comportamiento en altavoces reales requieren escucha del usuario.
