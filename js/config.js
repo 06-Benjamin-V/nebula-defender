@@ -12,11 +12,12 @@ export const CONFIG = {
     sentinel: { health: 2, points: 250, fireInterval: 3.3, shotSpeed: 130, pattern: 'spread', swayX: 3, swayY: 0, frequency: 1.8 },
   },
   enemyFire: { initialDelayFactor: 0.5, maxAimSlope: 0.65, spreadSlopes: [-0.32, 0, 0.32] },
-  // Filas de arriba hacia abajo; nivel 4 exclusivo del jefe.
+  // Cinco sectores; el quinto es exclusivo del jefe.
   levels: [
     { name: 'ÓRBITA EXTERIOR', rows: ['scout', 'scout', 'scout'], speed: 24, descent: 10, volleyInterval: 1.05, maxShots: 5 },
     { name: 'CINTURÓN ESPECTRAL', rows: ['wraith', 'scout', 'wraith'], speed: 32, descent: 12, volleyInterval: 0.85, maxShots: 7 },
     { name: 'BASTIÓN CARMESÍ', rows: ['sentinel', 'wraith', 'sentinel'], speed: 40, descent: 14, volleyInterval: 0.72, maxShots: 10 },
+    { name: 'UMBRAL DEL VACÍO', rows: ['sentinel', 'wraith', 'scout', 'wraith'], speed: 43, descent: 12, volleyInterval: 0.64, maxShots: 12 },
     { name: 'NÉMESIS', boss: true },
   ],
   campaign: { introDuration: 1.5 },

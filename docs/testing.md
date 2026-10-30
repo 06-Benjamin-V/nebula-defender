@@ -2,6 +2,16 @@
 
 Este registro describe comprobaciones efectivamente ejecutadas por Codex. No acredita pruebas del estudiante ni dispositivos que no se utilizaron.
 
+## Develop — cinco sectores y campo ampliado
+
+- 45 pruebas automáticas aprobadas, incluida la transición completa 1→2→3→4→5, victoria solo tras Némesis y puntuación total de 19.000. El ajuste comprueba pantallas por encima de escala ×2.
+- Diagnóstico de campaña: semillas 1 y 3 ganan en 84 y 85 segundos simulados, ambas con dos vidas y 19.000 puntos. La semilla 2 pierde en el cuarto sector a los 58 segundos con 14.050 puntos. El controlador no recibió vidas adicionales ni cambios de salud; su derrota genera código de salida 1 por diseño.
+- Navegador: accesos debug a 4 (Umbral del Vacío, cuatro filas) y 5 (Némesis, barra 80/80), pausa y vuelta al modo normal. Sin avisos ni errores en los registros consultados.
+- Resoluciones comprobadas: 844×390, 667×375, 568×320, 390×844, 320×568 y 1920×1080. En todas, scrollWidth/scrollHeight coinciden con el viewport. En horizontal las flechas comparten coordenada vertical, miden 56×56 y quedan fuera del campo junto al botón de disparo del lado opuesto. En vertical los botones quedan al pie de la pantalla.
+- Canvas en 844×390: 447×298, frente a los 339×226 de la versión anterior; en 1920×1080 alcanza 1369×912,66 sin deformación. La prueba mínima de 568×320 mantiene un campo de 294×196 con controles accesibles.
+- Captura real: `captures/develop-landscape.png`, tomada en debug para mostrar el nuevo sector y sus hitboxes. Los cambios de viewport de prueba se restablecieron al terminar.
+- Pendiente: probar simultáneamente dos dedos y áreas seguras en un teléfono físico, y valorar la dificultad con jugadores humanos.
+
 ## Pruebas reproducibles
 
 Desde la raíz, con Node.js 24:

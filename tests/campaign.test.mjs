@@ -34,9 +34,12 @@ test('la introducción deja mover la nave y suspende disparos y enemigos; luego 
   assert.notEqual(run.levels.targets[0].x, initial);
 });
 
-test('la campaña avanza 1→2→3→4 y solo derrotar al jefe concede victoria y puntaje exacto', () => {
+test('la campaña tiene cinco sectores y avanza 1→2→3→4→5 antes de conceder victoria', () => {
   const run = session();
-  for (let number = 1; number < 4; number++) {
+  assert.equal(CONFIG.levels.length, 5);
+  assert.equal(CONFIG.levels[3].name, 'UMBRAL DEL VACÍO');
+  assert.equal(CONFIG.levels[4].boss, true);
+  for (let number = 1; number < CONFIG.levels.length; number++) {
     assert.equal(run.levels.number, number); clearStage(run);
     assert.equal(run.result, null); assert.equal(run.levels.number, number + 1);
     assert.equal(run.projectiles.length, 0); assert.equal(run.powerUps.items.length, 0);

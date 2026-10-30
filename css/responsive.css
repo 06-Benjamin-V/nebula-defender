@@ -1,7 +1,12 @@
 /* El área lógica conserva 3:2; Layout calcula el tamaño sin deformar el canvas. */
 html:has(.game-page) { height: 100%; overflow: hidden; overscroll-behavior: none; }
 .game-page { height: 100dvh; min-height: 0; overflow: hidden; overscroll-behavior: none; }
-.game-page > .shell { height: 100%; }
+.game-page > .shell { height: 100%; width: 100%; }
+.game-page .masthead, .game-page .heading, .game-page .controls, .game-page .page-footer, .game-page .console-footer { display: none; }
+.game-page .console { position: relative; display: flex; flex-direction: column; height: 100%; margin: 0; border-radius: 0; border: 0; }
+.game-page .viewport { flex: 0 0 auto; margin: auto; }
+.game-page .console-toolbar, .game-page .hud, .game-page .power-bar, .game-page .touch-controls { flex-shrink: 0; }
+.game-page .debug-note { position: fixed; bottom: 2px; left: 50%; transform: translateX(-50%); z-index: 3; margin: 0; font-size: 8px; pointer-events: none; }
 .game-page .heading { padding: 12px 0; }
 .game-page .masthead { height: 48px; }
 .game-page .controls { margin: 10px 0; }
@@ -13,7 +18,7 @@ html:has(.game-page) { height: 100%; overflow: hidden; overscroll-behavior: none
 }
 @media (max-width: 620px) {
   .game-page .masthead, .game-page .heading, .game-page .controls, .game-page .page-footer { display: none; }
-  .game-page .console { margin-top: 6px; }
+  .game-page .console { margin-top: 0; }
 }
 body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 .viewport { max-height: none; max-width: 100%; overflow: hidden; }
@@ -90,25 +95,22 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 @media (max-height: 560px) and (orientation: landscape) {
   .shell { width: min(1040px, 98%); }
   .masthead, .heading, .controls, .page-footer { display: none; }
-  .console { display: grid; grid-template-columns: 72px minmax(0, 1fr) 72px; margin: 6px auto; }
-  .console-toolbar, .hud, .power-bar, .console-footer { grid-column: 1 / -1; }
-  .console-toolbar { grid-row: 1; padding: 4px 10px; }
-  .console-toolbar button { min-height: 36px; padding: 7px 10px; }
+  .console-toolbar { padding: 0 8px; }
+  .console-toolbar button { min-height: 44px; padding: 6px 10px; }
   .console-toolbar .console-tag { display: none; }
-  .hud { grid-row: 2; display: flex; flex-wrap: nowrap; padding: 6px 12px; gap: 16px; min-height: 44px; }
+  .hud { display: flex; flex-wrap: nowrap; padding: 0 12px; gap: 16px; min-height: 44px; }
   .hud div { gap: 3px; }
   .hud div > span { font-size: 9px; }
   .hud strong { font-size: 11px; }
   .hud div:first-child strong { font-size: 17px; }
   .hud .sector { flex: 1; }
-  .hud button { min-height: 36px; padding: 6px 10px; font-size: 11px; }
-  .power-bar { grid-row: 3; min-height: 24px; padding: 6px 12px; font-size: 9px; }
-  .viewport { grid-column: 2; grid-row: 4; }
-  .console-footer { grid-row: 5; padding: 6px 12px; font-size: 8px; }
-  .touch-controls { grid-column: 1 / -1; grid-row: 4; align-self: stretch; background: transparent; border: 0; padding: 6px; pointer-events: none; }
-  .touch-move { flex-direction: column; gap: 8px; pointer-events: auto; }
-  .touch-controls button { min-width: 56px; min-height: 50px; }
-  .touch-controls .touch-fire { pointer-events: auto; min-width: 60px; width: 60px; min-height: 64px; font-size: 9px; letter-spacing: 0; padding: 4px; }
+  .hud button { min-height: 44px; padding: 6px 10px; font-size: 11px; }
+  .power-bar { min-height: 24px; padding: 5px 12px; font-size: 9px; }
+  .power-bar:has(#power-empty:not([hidden])) { display: none; }
+  .touch-controls { position: absolute; z-index: 2; bottom: 16px; left: 8px; right: 8px; background: transparent; border: 0; padding: 0; pointer-events: none; }
+  .touch-move { flex-direction: row; flex-wrap: nowrap; gap: 8px; pointer-events: auto; }
+  .touch-controls button { min-width: 56px; min-height: 56px; }
+  .touch-controls .touch-fire { pointer-events: auto; min-width: 72px; width: 72px; min-height: 64px; font-size: 10px; letter-spacing: 0; padding: 4px; }
   .menu-emblem, .overlay .panel-note, .overlay[data-state="menu"] #panel-text { display: none; }
   .overlay { padding: 10px; }
   .overlay .eyebrow { font-size: 8px; margin: 3px 0; }
@@ -120,4 +122,8 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
   .result-summary { padding: 6px 10px; gap: 18px; margin: 5px 0; }
   .result-summary dd { font-size: 14px; margin-top: 4px; }
   .result-summary dt { font-size: 8px; }
+}
+/* También ofrece los controles en vistas móviles con ratón o dispositivos híbridos. */
+@media (max-width: 620px), (max-width: 1000px) and (max-height: 560px) and (orientation: landscape) {
+  .touch-controls { display: flex; }
 }

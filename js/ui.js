@@ -108,9 +108,9 @@ export class UI {
     this.pause.textContent = state === STATES.PAUSED ? 'Continuar [P]' : 'Pausar [P]';
     this.restart.hidden = state !== STATES.PAUSED;
     const panels = {
-      menu: ['PROTOCOLO DE DEFENSA', 'LA GALAXIA TE NECESITA.', 'Tres vidas. Cuatro sectores. Destruye a Némesis y protege la galaxia.', 'JUGAR · INICIAR MISIÓN →'],
+      menu: ['PROTOCOLO DE DEFENSA', 'LA GALAXIA TE NECESITA.', 'Tres vidas. Cinco sectores. Destruye a Némesis y protege la galaxia.', 'JUGAR · INICIAR MISIÓN →'],
       paused: ['SEÑAL EN ESPERA', 'MISIÓN EN PAUSA', 'Respira. La galaxia puede esperar un momento.', 'CONTINUAR →'],
-      victory: ['NÉMESIS DESTRUIDA', 'GALAXIA A SALVO', 'Has superado los cuatro sectores. La humanidad vuelve a ver las estrellas.', 'VOLVER A JUGAR →'],
+      victory: ['NÉMESIS DESTRUIDA', 'GALAXIA A SALVO', 'Has superado los cinco sectores. La humanidad vuelve a ver las estrellas.', 'VOLVER A JUGAR →'],
       defeat: ['SEÑAL PERDIDA', 'MISIÓN FALLIDA', 'No quedan naves de reserva. Vuelve a intentarlo, piloto.', 'REINTENTAR →'],
     };
     if (!playing) {

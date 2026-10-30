@@ -1,5 +1,13 @@
 # Registro de Codex
 
+## Develop — ampliación de campaña y responsive
+
+Se conservaron los tres primeros sectores y se añadió Umbral del Vacío con 32 enemigos mixtos, cuatro filas y mayor presión de disparo. Némesis pasa al sector cinco. Menú, ayuda, resumen y atajos debug reflejan cinco sectores. La campaña completa concede 19.000 puntos.
+
+La consola ocupa toda la ventana, sin cabeceras decorativas ni límite de ancho/escala. En horizontal las flechas van en una fila a la izquierda y el disparo a la derecha, sin invadir el canvas. Layout mide los controles para reservar sus zonas, ignora márgenes de elementos ocultos y observa los cambios de tamaño del HUD y la barra de mejoras. Mantiene 3:2, áreas seguras y ausencia de desplazamiento.
+
+Se ejecutaron 45 pruebas automáticas, comprobación de 66 referencias locales y revisión en navegador en seis tamaños; el registro detallado está en `testing.md`. Dos simulaciones ganaron y una perdió en el nuevo sector. Se guardó evidencia visual del cuarto sector en `captures/develop-landscape.png`. No se realizó una prueba física con dos dedos.
+
 ## Fase 1 — Base jugable
 
 Codex inspeccionó el directorio inicialmente vacío y creó la estructura modular, el juego base con sprites provisionales originales y las instrucciones de ejecución. No se utilizaron recursos externos ni herramientas de compilación. Las fases siguientes requieren confirmación del estudiante.

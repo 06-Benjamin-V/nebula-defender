@@ -55,12 +55,13 @@ test('los botones táctiles también permiten pulsación sostenida con teclado y
     f.buttons[2].handlers.blur(); assert.equal(f.input.firing, false);
   } finally { f.restore(); }
 });
-test('el ajuste cabe en móvil vertical y horizontal, conserva 3:2 y usa escala entera cuando procede', () => {
+test('el ajuste cabe en móvil y aprovecha pantallas grandes sin recortar ni deformar', () => {
   for (const [width, height] of [[300, 400], [390, 500], [700, 180], [1040, 700], [800, 500]]) {
     const size = fitStage(width, height);
     assert.ok(size.width <= width); assert.ok(size.height <= height);
     assert.ok(Math.abs(size.width / size.height - 1.5) < .00001);
   }
   assert.deepEqual(fitStage(960, 640), { width: 960, height: 640 });
-  assert.deepEqual(fitStage(500, 340), { width: 480, height: 320 });
+  assert.deepEqual(fitStage(500, 340), { width: 500, height: 1000 / 3 });
+  assert.deepEqual(fitStage(1920, 1080), { width: 1620, height: 1080 });
 });

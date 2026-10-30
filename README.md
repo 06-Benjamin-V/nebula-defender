@@ -35,16 +35,17 @@ Abrir http://127.0.0.1:8000. Detener el servidor con Ctrl+C. El servidor de Node
 - Reintentar después de ganar o perder empieza una campaña limpia; también se puede reiniciar desde pausa.
 - En dispositivos táctiles aparecen botones de izquierda, derecha y disparo. Mantén una dirección y Disparar con dos dedos; al soltar o cancelar un toque se libera esa acción. En menú y pausa están deshabilitados.
 
-## Estado: Fase 5 — implementación completa
+## Estado: develop — cinco niveles y vista ampliada
 
-Campaña jugable de cuatro sectores. Los sectores 1–3 contienen 24 invasores cada uno; el cuarto es un combate exclusivo contra el jefe.
+Campaña jugable de cinco sectores. Los sectores 1–3 contienen 24 invasores cada uno; el cuarto reúne 32 enemigos de las tres especies y el quinto es exclusivo del jefe.
 
 | Sector | Contenido y diferencia |
 | --- | --- |
 | 1 · Órbita exterior | Exploradores Prisma, un impacto de resistencia, tiros verticales. |
 | 2 · Cinturón espectral | Espectros Violeta con oscilación vertical y tiro dirigido, mezclados con exploradores; mayor velocidad y presión. |
 | 3 · Bastión carmesí | Centinelas de dos impactos con desplazamiento lateral y abanico triple, mezclados con espectros; formación más rápida. |
-| 4 · Némesis | Jefe de 80 puntos de salud, patrulla lateral, abanicos y torretas dirigidas alternados. Al 50 % de salud, aumenta velocidad, cadencia y amplitud del abanico. Barra de salud y breve aviso visual antes del disparo. |
+| 4 · Umbral del Vacío | Cuatro filas de centinelas, espectros y exploradores; velocidad de 43 px/s, descenso de 12 px y hasta 12 disparos enemigos. Última formación antes del reactor. |
+| 5 · Némesis | Jefe de 80 puntos de salud, patrulla lateral, abanicos y torretas dirigidas alternados. Al 50 % de salud, aumenta velocidad, cadencia y amplitud del abanico. Barra de salud y breve aviso visual antes del disparo. |
 
 Al vaciar una formación se limpia el campo de proyectiles y cápsulas y comienza el siguiente sector, con una introducción de 1,5 segundos. Durante ella puedes mover la nave, pero no hay disparos. La victoria se obtiene únicamente al destruir a Némesis. Cada nueva campaña comienza con tres vidas y cero puntos.
 
@@ -60,7 +61,7 @@ Al vaciar una formación se limpia el campo de proyectiles y cápsulas y comienz
 
 ### Puntuación y récord
 
-Explorador: 100 puntos; espectro: 150; centinela: 250; Némesis: 3.000. Una campaña sin repetir sectores por invasión suma **13.800 puntos**. Cada baja puntúa una sola vez y el jefe solo concede puntos al ser destruido.
+Explorador: 100 puntos; espectro: 150; centinela: 250; Némesis: 3.000. Una campaña sin repetir sectores por invasión suma **19.000 puntos**. Cada baja puntúa una sola vez y el jefe solo concede puntos al ser destruido.
 
 El récord se guarda en `localStorage`, con acceso protegido por `try/catch` y validación del valor leído. Si no hay almacenamiento disponible, se mantiene en memoria durante la sesión. Se conserva al reiniciar la campaña. El récord pertenece al origen: `localhost` y `127.0.0.1` mantienen registros separados.
 
@@ -84,9 +85,9 @@ La configuración visual y las notas de cada efecto de sonido están también en
 
 ## Responsive y accesibilidad
 
-- El campo mantiene siempre 3:2 y la resolución interna de 480×320. Se limita a escala ×2 y aprovecha escala entera cuando cabe sin desaprovechar espacio útil; en pantallas pequeñas se usa escala proporcional fraccional con pixelado y sin suavizado.
-- El diseño compacto reorganiza HUD y botones. En horizontal de poca altura oculta el encabezado decorativo y reserva los lados para los controles táctiles. En vertical reserva espacio para los botones inferiores. Al iniciar en un dispositivo táctil, desplaza el panel al área visible si hace falta.
-- Los controles se muestran mediante `(any-pointer: coarse)`, por lo que también funcionan en equipos híbridos con pantalla táctil. El cambio de tamaño, la pérdida de captura, la cancelación de un puntero, pausa y reinicio limpian pulsaciones retenidas. Los botones también admiten mantener Espacio/Enter cuando reciben foco de teclado.
+- El campo mantiene siempre 3:2 y la resolución interna de 480×320. Aprovecha el ancho y el alto disponibles sin límite de escala ×2 ni ancho máximo de 1040 px. La interfaz decorativa cede espacio al juego; el escalado conserva el pixelado y no deforma las colisiones.
+- En horizontal las flechas quedan juntas en una fila a la izquierda y Disparar a la derecha, fuera del canvas. El HUD se compacta y la barra de mejoras vacía se oculta. En vertical los controles quedan al pie de la pantalla. El campo se recalcula al rotar o cambiar la altura del HUD sin desplazar la página.
+- Los controles se muestran en pantallas táctiles y vistas móviles estrechas, también con ratón. El cambio de tamaño, la pérdida de captura, la cancelación de un puntero, pausa y reinicio limpian pulsaciones retenidas. Los botones también admiten mantener Espacio/Enter cuando reciben foco de teclado.
 - No se bloquea el zoom del navegador. Se respetan las áreas seguras de pantalla; el zoom no se contrarresta encogiendo el campo por el cambio del viewport visual.
 - Hay enlace para saltar al campo de juego, foco visible, etiquetas de controles, volumen y barra del jefe, diálogos nativos con retorno del foco y avisos discretos de estado, pérdida de vida y recogida de mejoras.
 - El contraste comprobado de las seis combinaciones principales supera 4,5:1: texto/fondo 17,06; texto/panel 15,77; secundario/panel 7,10; cian/panel 13,43; violeta/panel 6,08; botón principal 13,45. Esto no equivale a una auditoría completa con lectores de pantalla.
@@ -117,7 +118,7 @@ js/
   engine.js             Loop, render y conexión con interfaz/input
   session.js            Simulación de una campaña, sin DOM
   state.js              Menú, jugando, pausa, victoria y derrota
-  levels.js             Construcción y transición de los cuatro sectores
+  levels.js             Construcción y transición de los cinco sectores
   player.js             Movimiento, vidas, protección y mejoras activas
   enemies.js            Formación, especies y sus patrones de disparo
   boss.js               Movimiento, fases, torretas y abanicos de Némesis
@@ -147,7 +148,7 @@ Reiniciar crea una sesión limpia y descarta entidades y efectos anteriores; no 
 
 ## Debug y verificación
 
-Abrir http://127.0.0.1:8000/?debug=1. Muestra FPS y hitboxes; las teclas **1, 2, 3 y 4** (también numpad) inician directamente ese sector con tres vidas, cero puntos y sin mejoras. Funcionan desde menú, pausa o partida terminada. En modo normal no hacen nada. Las partidas debug no modifican el récord.
+Abrir http://127.0.0.1:8000/?debug=1. Muestra FPS y hitboxes; las teclas **1, 2, 3, 4 y 5** (también numpad) inician directamente ese sector con tres vidas, cero puntos y sin mejoras. Funcionan desde menú, pausa o partida terminada. En modo normal no hacen nada. Las partidas debug no modifican el récord.
 
 Con Node.js 24:
 
@@ -157,11 +158,11 @@ node tools/simulate-campaign.mjs
 node tools/check-project.mjs
 ```
 
-Las 42 pruebas cubren arte y caché, colisiones, resistencia, introducción/transiciones, vidas, invulnerabilidad, mejoras, límites de disparos, jefe, reinicio y almacenamiento. Incluyen audio diferido/sincronizado, preferencias, limpieza de voces, fallos de compatibilidad, partículas, vibración, diálogos, punteros simultáneos, cancelación/rotación y proporción del campo. El audio y los eventos táctiles se comprueban con dobles: esas pruebas no equivalen a una escucha ni a una prueba física con dos dedos. Las pruebas de transición colocan proyectiles controlados para verificar cada baja; no son partidas humanas.
+Las 45 pruebas cubren arte y caché, colisiones, resistencia, introducción/transiciones de cinco sectores, vidas, invulnerabilidad, mejoras, límites de disparos, jefe, reinicio y almacenamiento. Incluyen audio diferido/sincronizado, música, silencio/volumen, limpieza de voces, fallos de compatibilidad, partículas, vibración, diálogos, bloqueo de flechas, punteros simultáneos, cancelación/rotación y proporción del campo incluso por encima de escala ×2. El audio y los eventos táctiles se comprueban con dobles: esas pruebas no equivalen a una escucha ni a una prueba física con dos dedos. Las pruebas de transición colocan proyectiles controlados para verificar cada baja; no son partidas humanas.
 
-`check-project.mjs` comprueba 65 referencias locales/importaciones, identificadores HTML únicos, ausencia de referencias remotas en las páginas y las seis combinaciones de contraste indicadas arriba. No instala dependencias ni modifica archivos.
+`check-project.mjs` comprueba 66 referencias locales/importaciones, identificadores HTML únicos, ausencia de referencias remotas en las páginas y las seis combinaciones de contraste indicadas arriba. No instala dependencias ni modifica archivos.
 
-El diagnóstico adicional ejecuta un controlador automático sobre la misma simulación a pasos de 1/60 s, con tres semillas reproducibles y sin modificar daño o salud. En la comprobación de Codex las tres campañas llegaron a victoria en 64, 74 y 71 segundos **simulados**, con dos, una y tres vidas respectivamente, y 13.800 puntos. Esto no mide FPS ni demuestra una dificultad adecuada para cualquier jugador.
+El diagnóstico adicional ejecuta un controlador automático sobre la misma simulación a pasos de 1/60 s, con tres semillas reproducibles y sin modificar daño o salud. En develop, las semillas 1 y 3 ganaron en 84 y 85 segundos simulados, con dos vidas y 19.000 puntos; la semilla 2 perdió en el sector 4 a los 58 segundos, con 14.050 puntos. El diagnóstico devuelve código 1 si alguna simulación pierde. Esto no mide FPS ni demuestra una dificultad adecuada para cualquier jugador.
 
 Codex abrió la versión de Fase 3 en navegador y comprobó accesos debug a sectores 2–4, pausa/continuación, HUD, daño a Némesis (78/80 al consultar la barra), pérdida de vidas y derrota. En una partida normal obtuvo 800 puntos y comprobó que el récord de 800 se conserva tras recargar, con puntuación de partida reiniciada a cero; la tecla 4 permaneció deshabilitada fuera de debug. Sin avisos ni errores del juego en los registros consultados. Tras un problema inicial de renderizado limitado, la sesión nueva mostró aproximadamente 60 FPS en capturas puntuales: no es una medición sostenida. No se completó manualmente toda la campaña en navegador.
 

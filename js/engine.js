@@ -169,7 +169,7 @@ export class Game {
     ctx.restore();
     if (this.debug) {
       ctx.fillStyle = '#ecf8ff'; ctx.font = '9px monospace';
-      ctx.fillText('FPS ' + (dt > 0 ? Math.round(1 / dt) : 0) + ' · DEBUG 1–4 · SIN RÉCORD', 8, CONFIG.height - 5);
+      ctx.fillText('FPS ' + (dt > 0 ? Math.round(1 / dt) : 0) + ' · DEBUG 1–5 · SIN RÉCORD', 8, CONFIG.height - 5);
     }
     this.ui.sync(this.session, this.state.value, this.recordAtStart);
   }

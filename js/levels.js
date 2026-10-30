@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 import { Formation } from './enemies.js';
 import { Boss } from './boss.js';
-/** Cuatro sectores reales; solo destruir al jefe del último concede la victoria. */
+/** Cinco sectores reales; solo destruir al jefe del último concede la victoria. */
 export class Levels {
   constructor(random = Math.random) { this.random = random; this.load(1); }
   load(number) {
