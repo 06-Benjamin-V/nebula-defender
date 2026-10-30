@@ -17,9 +17,12 @@
     <header class="masthead"><a href="./" class="brand">N<span>✦</span>D</a><span>ORBITAL DEFENSE SYSTEM / 01</span><span class="status">● SISTEMA EN LÍNEA</span></header>
     <section class="heading"><p class="eyebrow">ÚLTIMA LÍNEA DE DEFENSA</p><h1>NEBULA <span>DEFENDER</span></h1><p>Una nave. Una misión. Ningún paso atrás.</p></section>
     <section class="console" aria-label="Juego arcade espacial">
-      <div class="hud"><div><span>PUNTUACIÓN</span><strong id="score">000000</strong></div><div><span>SECTOR</span><strong>01 / ÓRBITA EXTERIOR</strong></div><button id="pause" type="button" disabled>Pausar <kbd>P</kbd></button></div>
+      <div class="hud"><div><span>PUNTUACIÓN</span><strong id="score">000000</strong></div><div><span>RÉCORD</span><strong id="record">000000</strong></div><div><span>VIDAS</span><strong id="lives">3 / 3</strong></div><div class="sector"><span>SECTOR</span><strong id="level">01 / ÓRBITA EXTERIOR</strong></div><button id="pause" type="button" disabled>Pausar <kbd>P</kbd></button></div>
+      <div class="power-bar" aria-label="Mejoras activas"><span id="power-empty">SIN MEJORAS ACTIVAS</span><span id="power-double" hidden></span><span id="power-rapid" hidden></span><span id="power-shield" hidden></span></div>
       <div class="viewport">
         <canvas id="game" width="480" height="320" aria-label="Campo de batalla. Usa A y D o las flechas para moverte y espacio para disparar."></canvas>
+        <div id="boss-panel" class="boss-panel" hidden><div><span>NÉMESIS / REACTOR</span><span id="boss-mode">BLINDAJE ACTIVO</span></div><progress id="boss-health" value="80" max="80" aria-label="Vida de Némesis"></progress></div>
+        <div id="level-banner" class="level-banner" hidden><span id="level-label">SECTOR 01</span><strong id="level-name">ÓRBITA EXTERIOR</strong><span>PREPARA LA DEFENSA</span></div>
         <section id="overlay" class="overlay" aria-labelledby="panel-title">
           <p id="panel-label" class="eyebrow">PROTOCOLO DE DEFENSA</p>
           <h2 id="panel-title">PILOTO, TE ESPERAMOS.</h2>
@@ -32,8 +35,9 @@
       <footer class="console-footer"><span>◈ NAVE DEFENSORA / ND–01</span><span id="telemetry">EN ESPERA</span></footer>
     </section>
     <nav class="controls" aria-label="Controles"><span><kbd>←</kbd><kbd>→</kbd> o <kbd>A</kbd><kbd>D</kbd> Mover</span><span><kbd>ESPACIO</kbd> Disparar</span><span><kbd>P</kbd><kbd>ESC</kbd> Pausa</span></nav>
+    <p id="debug-note" class="debug-note" hidden>DEBUG · 1–4: iniciar sector con 3 vidas y 0 puntos · No guarda récords</p>
     <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
-    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><a href="sprites-preview.html">ATLAS DE SPRITES ↗</a><span>FASE 02 · ARTE ORIGINAL</span></footer>
+    <footer class="page-footer"><span>NEBULA DEFENDER © 2026</span><a href="sprites-preview.html">ATLAS DE SPRITES ↗</a><span>FASE 03 · CAMPAÑA</span></footer>
   </main>
   <script type="module" src="js/main.js"></script>
 </body>

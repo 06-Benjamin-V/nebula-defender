@@ -30,3 +30,21 @@ Verificaciones reales:
 - Captura real del atlas guardada por Codex en `docs/captures/phase-2-atlas.png`; corresponde al navegador integrado durante esta fase.
 
 Límites: no se completó una partida hasta sector despejado ni se midieron 60 FPS de forma sostenida. Movimiento reducido fue comprobado por pruebas de lógica y revisión de código; queda por probar con la preferencia del sistema real. No se validaron dispositivos móviles físicos. Partículas, audio y vibración de cámara corresponden a fases posteriores. La Fase 3 requiere confirmación del estudiante.
+
+## Fase 3 — Contenido y campaña
+
+El estudiante confirmó en el chat que la Fase 2 está correcta y autorizó esta fase. Codex añadió cuatro niveles reales, resistencia y patrones propios por especie, tres mejoras combinables, vidas, invulnerabilidad, jefe de dos fases, victoria/derrota y récord persistente. Se integraron HUD de vidas/mejoras/récord, introducciones de sector, barra de salud del jefe y atajos debug 1–4. Las partidas debug no escriben el récord normal.
+
+La simulación quedó en `session.js`, separada del motor visual, con módulos específicos para niveles, jefe, cápsulas y almacenamiento. Todos los valores de balance están en `config.js`. Los proyectiles usan barrido de trayectoria; un impacto no puede puntuar dos bajas. Una invasión reconstruye el sector y consume una vida; se conservaron las mecánicas de pausa y los sprites existentes. Las descripciones del atlas se actualizaron al contenido jugable.
+
+Verificaciones reales:
+
+- `node --check` sobre todos los módulos JavaScript: sin errores de sintaxis.
+- `node --test tests/*.test.mjs`: 23 pruebas aprobadas. Se adaptaron dos pruebas anteriores a las reglas de vidas y cadencia individual. Las nuevas cubren introducción y progresión 1→2→3→4, victoria y puntaje, daños simultáneos/invulnerabilidad, invasión, mejoras/renovación/expiración, recogida y descarte de cápsulas, resistencia del centinela, barrido de trayectoria, tipos de disparo, dos fases del jefe y sus límites, datos corruptos/almacenamiento bloqueado, reinicio y aislamiento del récord en debug.
+- `node tools/simulate-campaign.mjs`: tres campañas completas con controlador automático y semillas 1, 2 y 3. Usaron las reglas reales sin modificar salud, daño o resultados: victoria en 64, 74 y 71 segundos simulados, respectivamente; dos, una y tres vidas restantes; 13.800 puntos en cada caso. Es una prueba de integración de la simulación, no una partida humana ni un benchmark de renderizado.
+- Navegador integrado: carga, HUD de tres vidas/récord, atajos a sectores 2, 3 y 4, pausa y continuación con P, Némesis visible con barra de salud. Inicialmente el entorno mostró cerca de 1 FPS y un intento de mantener una tecla durante 30 s alcanzó el límite de la herramienta; se descartó ese intento como evidencia de combate. Tras recuperar la sesión, se observó derrota con 0/3 vidas; al reiniciar el sector 4, seis segundos de disparo causaron daño al jefe (78/80 al leer su barra en pausa) y pérdida de una vida. Las siguientes capturas mostraron aproximadamente 60 FPS puntuales; no se considera un benchmark sostenido.
+- Partida normal en navegador: ocho bajas, 800 puntos, récord de 800 y tres vidas. Tras recargar: menú, cero puntos, tres vidas y récord de 800 conservado. La tecla 4 no cambió el sector en modo normal. Sin avisos ni errores del juego en los registros de consola consultados.
+- Captura real final del combate debug contra Némesis guardada en `docs/captures/phase-3-boss.png`.
+- Comprobación HTTP final: respuestas 200 para el juego y los siete módulos comprobados (`session`, `levels`, `boss`, `power-ups`, `storage`, `engine` y `ui`). `git diff --check` no detectó errores de espacios.
+
+Pendientes de verificación manual: campaña completa a velocidad normal en el navegador habitual, sensaciones de dificultad, recogida visual de todas las mejoras y preferencia real de movimiento reducido. Se documentaron pasos en README. Audio, partículas, screen shake y documentación académica final corresponden a fases 4–5; no se avanzó a ellas.
